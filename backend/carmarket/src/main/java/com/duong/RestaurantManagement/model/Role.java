@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,11 +40,18 @@ public enum Role {
     private final Set<Permission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
-        var authorities = getPermissions()
-                .stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.name()))
-                .toList();
+//        var authorities = getPermissions()
+//                .stream()
+//                .map(permission -> new SimpleGrantedAuthority(permission.name()))
+//                .toList();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        getPermissions().forEach(permission ->
+                authorities.add(new SimpleGrantedAuthority(permission.name()))
+        );
+
+
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-        return authorities;
+        return authorities; //return a list of role so it will include role and permission
     }
 }

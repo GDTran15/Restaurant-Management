@@ -22,6 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -35,8 +39,20 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) {
 
         http.csrf(AbstractHttpConfigurer::disable)
+                .cors(c -> {
+                        CorsConfigurationSource source = request -> {
+                            CorsConfiguration configuration = new CorsConfiguration();
+                            configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+                            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                            configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                            configuration.setAllowCredentials(true);
+                            return configuration;
+                        };
+                        c.configurationSource(source);
+                    })
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers("/register",
+                                        "/login",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/swagger-ui.html",

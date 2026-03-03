@@ -5,6 +5,7 @@ import com.duong.RestaurantManagement.dto.user.request.UserRegisterRequestDTO;
 import com.duong.RestaurantManagement.dto.user.response.UserLoginResponseDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.model.User;
+import com.duong.RestaurantManagement.model.UserPrincipal;
 import com.duong.RestaurantManagement.repo.UserRepo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final AuthenticationManager authenticationManager;
+    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     private final JwtService jwtService;
 
     @Transactional
@@ -42,7 +45,7 @@ public class UserService {
 
     User user = User.builder()
             .username(userRegisterRequestDTO.username())
-            .password(userRegisterRequestDTO.password())
+            .password(bCryptPasswordEncoder.encode(userRegisterRequestDTO.password()))
             .email(userRegisterRequestDTO.email())
             .phone(userRegisterRequestDTO.phone())
             .createdAt(LocalDate.now())
@@ -59,7 +62,9 @@ public class UserService {
     public UserLoginResponseDTO loginForUser(@Valid UserLoginRequestDTO userLoginRequestDTO, HttpServletResponse httpServletResponse) {
         Authentication authentication= authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(userLoginRequestDTO.username(), userLoginRequestDTO.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtService.generateToken(userLoginRequestDTO.username());
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        String token = jwtService.generateToken(userPrincipal);
         Cookie cookie = new Cookie("token", token);
         cookie.setMaxAge(60*60*24);
         cookie.setHttpOnly(true); //mean no js

@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cce7c468-9e46-475c-bea3-425e7a2ffc8f" name="Changes" comment="" />
+    <list default="true" id="cce7c468-9e46-475c-bea3-425e7a2ffc8f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/carmarket/src/main/java/com/duong/carmarket/CarmarketApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/carmarket/src/main/java/com/duong/RestaurantManagement/RestaurantManagementApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carmarket/src/test/java/com/duong/carmarket/CarmarketApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/carmarket/src/test/java/com/duong/RestaurantManagement/CarmarketApplicationTests.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -90,6 +93,7 @@
       <updated>1771832645061</updated>
       <workItem from="1771832646067" duration="402000" />
       <workItem from="1771833169541" duration="63000" />
+      <workItem from="1772024930083" duration="6000" />
     </task>
     <servers />
   </component>
