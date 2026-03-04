@@ -24,7 +24,7 @@ export default function LoginPage(){
             const role = response.data.role;
             if(role === "ADMIN"){
                 localStorage.setItem("username", response.data.username);
-                navigate("/admin/dashboard");
+                navigate("/admin/home");
             }
 
         } catch (error) {
@@ -38,10 +38,12 @@ export default function LoginPage(){
         <>
         <div className="flex justify-center items-center h-screen">
             
-            <FormWrapper title={"Login"} submitFuntion={loginForUser}>
+            <FormWrapper width={96} title={"Login"} submitFuntion={loginForUser}>
                 <InputField label={"Username"} inputType={"text"} placeholder={"Enter your Username"} value={username} setValue={setUsername}/>
                 <InputField label={"Password"} inputType={"password"} placeholder={"Enter your Password"} value={password} setValue={setPassword}/> 
-                <Button buttonTitle={"Login"} variant={"navy"} width={"w-full"} type={"submit"}/>
+                <Button buttonTitle={"Login"} variant={"navy"} width={"w-full"} type={"submit"}>
+                Login
+                </Button>
             </FormWrapper>
         </div>
         </>
