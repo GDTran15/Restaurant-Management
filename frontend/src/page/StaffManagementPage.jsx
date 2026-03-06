@@ -2,6 +2,7 @@ import { IoIosAdd } from "react-icons/io";
 import Button from "../component/Button";
 import FormWrapper from "../component/FormWrapper";
 import InputField from "../component/InputField";
+import SelectInput from "../component/SelectInput";
 
 export default function StaffManagementPage() {
     return (
@@ -17,7 +18,7 @@ export default function StaffManagementPage() {
                     <div>
                         <InputField label={"Password"}/>
                         
-                        <InputField label={"Role"} inputType={"select"}/>
+                       <SelectInput label={"Role"}/>
                     </div>
                     <div className=" col-span-2">
                         

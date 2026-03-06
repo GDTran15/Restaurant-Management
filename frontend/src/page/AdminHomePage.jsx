@@ -35,7 +35,7 @@ export default function AdminHomePage(){
 
 
     return(<>
-        <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+        <NavBar currentPage={currentPage} username={adminName} setCurrentPage={setCurrentPage}/>
         <main className="ml-sidebar">
             {mainContent}
         </main>
