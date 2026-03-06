@@ -25,6 +25,15 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(value = FoodAvailabilityException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorApiResponse> foodNotAvailability(FoodAvailabilityException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage())
+                );
+    }
+
     @ExceptionHandler(value = ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorApiResponse> resourceNotFound(ResourceNotFoundException e) {

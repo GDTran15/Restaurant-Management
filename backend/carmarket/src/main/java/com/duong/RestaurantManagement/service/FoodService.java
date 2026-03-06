@@ -1,7 +1,10 @@
 package com.duong.RestaurantManagement.service;
 
 import com.duong.RestaurantManagement.dto.food.request.AddFoodRequestDTO;
+import com.duong.RestaurantManagement.dto.food.request.UpdateFoodRequestDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
+import com.duong.RestaurantManagement.exception.FoodAvailabilityException;
+import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.Food;
 import com.duong.RestaurantManagement.repo.FoodRepo;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +33,34 @@ public class FoodService {
                 .build();
         foodRepo.save(newFood);
         foodCategoryMapService.mapFoodToCategory(newFood,addFoodRequestDTO.foodCategoryId());
+    }
+
+    public void updateFoodInformation(UpdateFoodRequestDTO updateFoodRequestDTO, Long foodId) {
+        Food food = foodRepo.findById(foodId).orElseThrow(
+                () -> new ResourceNotFoundException("This food does not exist")
+        );
+        food.setFoodName(updateFoodRequestDTO.foodName());
+        food.setAvailable(updateFoodRequestDTO.isAvailable());
+        food.setPrice(updateFoodRequestDTO.price());
+        food.setDescription(updateFoodRequestDTO.description());
+        food.setFoodImageUrl(updateFoodRequestDTO.foodImageUrl());
+        food.setQuantity(updateFoodRequestDTO.quantity());
+
+        foodCategoryMapService.mapFoodToCategory(food,updateFoodRequestDTO.foodCategoryId());
+
+
+        foodRepo.save(food);
+    }
+
+
+    public void updateFoodAvailability(Long foodId, boolean available) {
+        Food food = foodRepo.findById(foodId).orElseThrow(
+                () -> new ResourceNotFoundException("This food does not exist")
+        );
+        if (food.getQuantity() == 0 && available) {
+            throw new FoodAvailabilityException("Food is out of stock");
+        }
+        food.setAvailable(available);
+        foodRepo.save(food);
     }
 }
