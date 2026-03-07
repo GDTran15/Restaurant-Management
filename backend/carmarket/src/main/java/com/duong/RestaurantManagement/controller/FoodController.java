@@ -32,4 +32,13 @@ public class FoodController {
         foodService.updateFoodAvailability(foodId,available);
         return ResponseEntity.ok("Successfully changed available food");
     }
+
+    @GetMapping
+    public ResponseEntity<Page<GetFoodListDTO>> getAllFoods(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        return ResponseEntity.ok(foodService.getFoodList(page, size));
+    }
 }
