@@ -1,6 +1,6 @@
 
 import { use, useState } from "react";
-import NavBar from "../component/NavBar";
+import NavBar from "../../component/NavBar";
 import FoodManagementPage from "./FoodManagementPage";
 import MenuManagementPage from "./MenuManagementPage";
 import StaffManagementPage from "./StaffManagementPage";

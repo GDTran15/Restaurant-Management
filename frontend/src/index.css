@@ -20,6 +20,8 @@ h1, h2, h3, h4, h5, h6 {
   --color-main-navy: #001F3F;
   
   --color-second-cream: #F5F5DC;
+
+  --color-dark-cream: #d6d6bc;
   
   --size-sidebar: 12.5rem;
 }
@@ -33,6 +35,12 @@ h1, h2, h3, h4, h5, h6 {
     }
     .sidebar-icon-active{
         @apply bg-second-cream text-main-navy
+    }
+    .horizontal-nav-bar{
+        @apply  px-2 rounded-2xl transition-all duration-200 hover:bg-white
+    }
+    .horizontal-nav-bar-active{
+        @apply bg-white
     }
     
 }

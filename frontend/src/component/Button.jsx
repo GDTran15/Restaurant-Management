@@ -1,11 +1,20 @@
-export default function Button({buttonTitle, variant,width, type,children
- }){
+export default function Button({children,type = "button",variant,width , className , onClick
+}) {
+
     const variants = {
-        navy : "bg-main-navy"
+        navy: "bg-main-navy text-white",
+        warning: "bg-yellow-300 text-black",
+        danger: "bg-red-600 text-black",
+        outline: "border border-gray-400 text-gray-700 bg-white"
     }
-    return(<>
-        <button type={type} className={`${variants[variant]} text-white px-4 py-1 rounded-xl hover:opacity-90 mt-2 ${width}`} >
+
+    return (
+        <button
+            type={type}
+            className={`${variants[variant]} px-4 py-1 rounded-xl hover:opacity-90 mt-2 ${width} ${className}`}
+            onClick={onClick}
+        >
             {children}
         </button>
-    </>)
+    )
 }
