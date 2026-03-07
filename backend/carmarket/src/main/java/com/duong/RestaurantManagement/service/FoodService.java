@@ -2,12 +2,15 @@ package com.duong.RestaurantManagement.service;
 
 import com.duong.RestaurantManagement.dto.food.request.AddFoodRequestDTO;
 import com.duong.RestaurantManagement.dto.food.request.UpdateFoodRequestDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.exception.FoodAvailabilityException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.Food;
 import com.duong.RestaurantManagement.repo.FoodRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,5 +65,13 @@ public class FoodService {
         }
         food.setAvailable(available);
         foodRepo.save(food);
+    }
+
+
+
+    public Page<GetFoodListDTO> getFoodList(int page, int size, String search) {
+        PageRequest pageable = PageRequest.of(page, size);
+
+         return  foodRepo.findAllFoodWithCategoryName(pageable,search);
     }
 }

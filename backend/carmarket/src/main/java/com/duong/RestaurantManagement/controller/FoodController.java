@@ -2,11 +2,19 @@ package com.duong.RestaurantManagement.controller;
 
 import com.duong.RestaurantManagement.dto.food.request.AddFoodRequestDTO;
 import com.duong.RestaurantManagement.dto.food.request.UpdateFoodRequestDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
 import com.duong.RestaurantManagement.model.Food;
 import com.duong.RestaurantManagement.service.FoodService;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.converters.models.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/foods")
@@ -36,9 +44,10 @@ public class FoodController {
     @GetMapping
     public ResponseEntity<Page<GetFoodListDTO>> getAllFoods(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search
     ) {
 
-        return ResponseEntity.ok(foodService.getFoodList(page, size));
+        return ResponseEntity.ok(foodService.getFoodList(page, size, search));
     }
 }
