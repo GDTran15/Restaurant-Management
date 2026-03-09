@@ -25,6 +25,12 @@ public class FoodCategoryController {
         return ResponseEntity.ok("Success");
     }
 
+    @PutMapping("/{foodCategoryId}")
+    public ResponseEntity<String> updateFoodCategory(@RequestParam String foodCategoryName,@PathVariable Long foodCategoryId) {
+        foodCategoryService.updateFoodCategoryName(foodCategoryName,foodCategoryId);
+        return ResponseEntity.ok("Food has been updated");
+    }
+
 
     @GetMapping
     public ResponseEntity<List<GetAllFoodCategoryDTO>> getFoodCategory() {

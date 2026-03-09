@@ -44,10 +44,15 @@ public class FoodController {
     @GetMapping
     public ResponseEntity<Page<GetFoodListDTO>> getAllFoods(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "9") int size,
             @RequestParam(defaultValue = "") String search
     ) {
 
         return ResponseEntity.ok(foodService.getFoodList(page, size, search));
+    }
+    @DeleteMapping("/{foodId}")
+    public ResponseEntity<String> deleteFood(@PathVariable Long foodId) {
+        foodService.removeFood(foodId);
+        return ResponseEntity.ok("Successfully deleted food");
     }
 }

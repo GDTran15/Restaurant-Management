@@ -27,4 +27,8 @@ public class FoodCategoryMapService {
                 .build();
         foodCategoryMapRepo.save(foodCategoryMap);
     }
+
+    public void deleteMap(Long foodId) {
+        foodCategoryMapRepo.deleteByFood_FoodId(foodId);
+    }
 }

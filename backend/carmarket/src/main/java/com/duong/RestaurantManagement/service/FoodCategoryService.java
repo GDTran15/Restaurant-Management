@@ -4,6 +4,7 @@ import com.duong.RestaurantManagement.dto.food.response.GetAllFoodCategoryDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryAndFoodCountDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.exception.FoodCategoryNotEmptyException;
+import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.FoodCategory;
 import com.duong.RestaurantManagement.model.FoodCategoryMap;
 import com.duong.RestaurantManagement.repo.FoodCategoryMapRepo;
@@ -59,5 +60,13 @@ public class FoodCategoryService {
            throw new FoodCategoryNotEmptyException("Cannot delete this food category because some foods are still using it.");
        }
        foodCategoryRepo.deleteById(foodCategoryId);
+    }
+
+    public void updateFoodCategoryName(String foodCategoryName, Long foodCategoryId) {
+        FoodCategory foodCategory = foodCategoryRepo.findById(foodCategoryId).orElseThrow(() ->
+                new ResourceNotFoundException("Food category not found"));
+        foodCategory.setFoodCategoryName(foodCategoryName);
+        foodCategoryRepo.save(foodCategory);
+
     }
 }

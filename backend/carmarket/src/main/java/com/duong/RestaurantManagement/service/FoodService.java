@@ -21,6 +21,7 @@ public class FoodService {
     private final FoodRepo foodRepo;
     private final FoodCategoryMapService foodCategoryMapService;
 
+
     @Transactional
     public void createNewFood(AddFoodRequestDTO addFoodRequestDTO) {
         if (foodRepo.existsByFoodName(addFoodRequestDTO.foodName())){
@@ -38,6 +39,7 @@ public class FoodService {
         foodCategoryMapService.mapFoodToCategory(newFood,addFoodRequestDTO.foodCategoryId());
     }
 
+    @Transactional
     public void updateFoodInformation(UpdateFoodRequestDTO updateFoodRequestDTO, Long foodId) {
         Food food = foodRepo.findById(foodId).orElseThrow(
                 () -> new ResourceNotFoundException("This food does not exist")
@@ -56,6 +58,7 @@ public class FoodService {
     }
 
 
+    @Transactional
     public void updateFoodAvailability(Long foodId, boolean available) {
         Food food = foodRepo.findById(foodId).orElseThrow(
                 () -> new ResourceNotFoundException("This food does not exist")
@@ -73,5 +76,13 @@ public class FoodService {
         PageRequest pageable = PageRequest.of(page, size);
 
          return  foodRepo.findAllFoodWithCategoryName(pageable,search);
+    }
+
+
+    @Transactional
+    public void removeFood(Long foodId) {
+        foodCategoryMapService.deleteMap(foodId);
+        foodRepo.deleteById(foodId);
+
     }
 }
