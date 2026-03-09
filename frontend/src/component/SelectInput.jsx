@@ -1,4 +1,4 @@
-export default function SelectInput({label , value , setValue}){
+export default function SelectInput({label , value , setValue, itemList, itemValue, itemName}){
     return(
         <>
         <div>
@@ -8,12 +8,18 @@ export default function SelectInput({label , value , setValue}){
             <select  
              className={`border p-1.5 rounded w-full bg-input-bg focus:outline-none focus:ring-0 focus:border-grey-600 mb-2 `}
                 value={value}
-                onChange={(e) => setValue(e.target.value) }
+                onChange={(e) => {
+                    setValue(e.target.value);
+                    console.log(e.target.value);
+                }}
              >
-                <option value="1">Meat</option>
-                <option value="1">M</option>
-                <option value="1">A</option>
-                <option value="1">A</option>
+                <option value="">Select {label}</option>
+                {itemList.map((item) => (
+                 
+                <option key={item[itemValue]} value={item[itemValue]}>
+                    {item[itemName]}
+                </option>
+                ))}
              </select>
         </div>
     

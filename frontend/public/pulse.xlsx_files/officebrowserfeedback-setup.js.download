@@ -1,0 +1,30 @@
+window.OfficeBrowserFeedback = window.OfficeBrowserFeedback || {};
+
+window.OfficeBrowserFeedback.initOptions = {
+    appId: 2156,
+    stylesUrl: "officebrowserfeedback.min.css",
+    intlUrl: "dist/assets/feedback/intl/", // Where intl files are hosted
+    // Screenshots do not render SVG images (charts, icons, etc), and does not render static content hosted on different domains. Might be an issue when user provides 
+    screenshot: true,
+    // intlFilename is an optional property for using a custom filename for the internationalized strings, the default filename will be used if it is not specified
+    intlFilename: "officebrowserfeedbackstrings.js",
+    environment: 0, // 0 - Prod, 1 - Int
+    primaryColour: "#217346", // Focus
+    secondaryColour: "#3F8159", // Hover
+    locale: document.documentElement.lang,
+    userEmailConsentDefault: true,
+    // userEmail: "charting@microsofttesting.com",
+    // sessionId: "10000000-0000-0000-0000-000000000000", // (optional) If specified, the value needs to be a valid GUID
+    // cid: "1234567890_LiveId", // (optional)
+    // build: "123456789", // (optional) Another example: 99.1.1.123456789
+    onError: function onError(err) { console.log("SDK encountered error: " + err); }, // (optional) Callback which gets executed when SDK errors
+    bugForm: false, // (optional) false by default
+};
+
+(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s); js.id = id;
+    js.src = "lib/officebrowserfeedback.min.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'officebrowserfeedback-jssdk'));

@@ -5,7 +5,7 @@ import InputField from "../../../component/InputField";
 import SelectInput from "../../../component/SelectInput";
 import UploadImage from "../../../component/UploadImage";
 import Switch from "../../../component/Switch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function AddFoodPage() {
@@ -16,10 +16,11 @@ export default function AddFoodPage() {
     const [description, setDescription] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [isAvailable, setIsAvailable] = useState(false);
+    const [foodCategories,setFoodCategories] = useState([]);
    
 
     const handleAddFood = async () => {
-        console.log("imageUrl:", imageUrl);
+        
         try {
             const response = await axios.post(`http://localhost:8080/foods`,{
                 foodName,
@@ -28,13 +29,34 @@ export default function AddFoodPage() {
                 quantity,
                 foodImageUrl : imageUrl,
                 price,
-                foodCategoryId: 1
+                foodCategoryId: categoryId
             })
-            console.log(response)
+            console.log(response.data);
+            setFoodName("");
+           
+            setPrice("");
+            setQuantity("");
+            setDescription("");
+            setImageUrl("");
+            setIsAvailable(false);
         } catch (error) {
             console.log(error);
         }
     }
+
+        const fetchFoodCategory = async () =>{
+        try {
+            const response = await axios.get(`http://localhost:8080/food-categories`);
+            
+            setFoodCategories(response.data)
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+        useEffect(() => {
+            fetchFoodCategory();
+        }, []);
 
 
     return (
@@ -46,7 +68,7 @@ export default function AddFoodPage() {
                            
                          <div className=" grid grid-cols-2 gap-2 mb-2">
                                     <InputField  label={"Food Name"} value={foodName} setValue={setFoodName}/>
-                                    <SelectInput label={"Category"} value={categoryId} setValue={setCategoryId}/>
+                                    <SelectInput label={"Category"} value={categoryId} setValue={setCategoryId} itemList={foodCategories} itemName={"foodCategoryName"} itemValue={"foodCategoryId"} />
                                     <InputField inputType={"number"} step={0.01} label={"Price"} value={price} setValue={setPrice}/>
                                     <InputField inputType={"number"}  label={"Quantity"} value={quantity} setValue={setQuantity}/>
                                     

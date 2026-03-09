@@ -1,0 +1,1032 @@
+:root {
+    --datapane-width: 248px;
+    --pivotToolbarHeight: 45px;
+    --feedbackButtonHeight: 40px;
+}
+
+body {
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    margin: 0px;
+}
+
+.root-new {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#app-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0px 1px;
+    flex-grow: 1;
+}
+
+#scrollable-container {
+    height: calc(100vh - var(--pivotToolbarHeight) - var(--feedbackButtonHeight));
+}
+
+#scrollable-container::-webkit-scrollbar {
+    background-color: #f5f5f5;
+    width: 6px;
+}
+
+#scrollable-container::-webkit-scrollbar-thumb {
+    background-color: rgb(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+#scrollable-container::-webkit-scrollbar-thumb:hover {
+    background-color: #797775;
+    width: 8px;
+    border-radius: 4px;
+}
+
+iframe {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0px;
+    border: 0;
+    overflow: hidden;
+}
+
+.iframe-body {
+    overflow: hidden;
+}
+
+.iframe-div {
+    height: 50px;
+}
+
+.iframe-store-div {
+    font-size: 8pt;
+    height: 25px;
+    text-decoration: none;
+}
+
+.iframe-store-text {
+    line-height: 15px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.scrollbar > * {
+    padding-top: 7px;
+    margin-bottom: 0px !important;
+}
+
+/* insert pane styles begin */
+.chartList .chartItem {
+    border-width: 1px;
+    border-style: solid;
+    box-sizing: border-box;
+    margin-right: 3px;
+}
+
+.chartList .ms-list-cell {
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 11pt;
+}
+
+.chartList .ms-label {
+    padding: 0px;
+    margin-bottom: 8px;
+    font-size: 11pt;
+}
+
+.chartList {
+    margin-left: 6px;
+}
+
+.chartItem:focus {
+    outline: none;
+}
+
+.image-hover {
+    border: 1px solid var(--border-primary);
+    margin-right: 3px;
+}
+/* insert pane styles end */
+
+/* data pane styles begin */
+.data {
+    margin: 0px 16px;
+}
+
+.dataPane .ms-label {
+    display: inline-block;
+}
+
+.dataPaneSourceOnlyWarningBar {
+    padding-right: 20px;
+    margin-top: 20px;
+}
+
+.dataSource {
+    margin-bottom: 24px;
+}
+
+.sourceDisplay .ms-Button {
+    display: inline-block;
+    height: 27px;
+    min-width: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid var(--border-primary);
+    margin-left: 8px;
+    cursor: default;
+}
+
+.sourceDisplay .ms-Button:hover,
+.sourceDisplay .ms-Button:focus {
+    border: 1px solid var(--accent-secondary);
+    /* background-color: var(--background-primary); */
+}
+
+.sourceDisplay .ms-Button-label {
+    font-weight: normal;
+}
+
+.sourceDisplay .ms-TextField {
+    display: inline-block;
+    border-width: 1px;
+    border-style: solid;
+    width: 200px;
+}
+
+.sourceDisplay .ms-TextField-fieldGroup {
+    height: 25px;
+}
+
+.sourceDisplay [disabled].ms-TextField-field {
+    font-size: 14px;
+    padding-left: 10px;
+}
+
+.bindingDisplay {
+    margin-left: 20px;
+    font-size: 14px;
+}
+
+.ms-Label {
+    font-size: 14px;
+}
+
+.dataWellList .ms-list-cell {
+    display: block;
+    border: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0px;
+}
+
+.dataBindingWell {
+    border-width: 1px;
+    border-style: solid;
+    width: var(--datapane-width);
+    margin-bottom: 20px;
+    box-sizing: content-box;
+}
+
+.dataWellNameAndAddField {
+    width: 250px;
+    margin-bottom: 8px;
+}
+
+.dataWellNameAndAddField .ms-Label {
+    padding: 0px;
+}
+
+.dataWellName {
+    font-size: 12px;
+}
+
+.dataField {
+    min-height: 32px;
+    position: relative;
+}
+
+.dataField:focus {
+    outline: none;
+}
+
+.dataField .dataFieldLabel {
+    min-width: 0;
+    padding: 5px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 400;
+    font-size: 12px;
+    display: block;
+}
+
+.dataFieldHeader {
+    min-height: 32px;
+    cursor: pointer;
+}
+
+.dataField .dataFieldButton {
+    display: inline-block;
+    cursor: pointer;
+    width: 28px;
+}
+
+.dataFieldArrow:disabled {
+    opacity: 0.4;
+}
+
+.dataField.dataFieldExpanded .dataField.dataFieldExpandedWithFmla .dataFieldRemoveField {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+.dataField .dataFieldButton:focus::after {
+    outline-style: solid;
+    outline-width: 1px;
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-width: 1px;
+    border-style: solid;
+    z-index: 1;
+}
+
+.dataField .dataFieldControl {
+    float: right;
+}
+
+.dataFieldControl.hidden {
+    opacity: 0;
+    width: 0px;
+    overflow: hidden;
+}
+
+.dataFieldChartTypeIcon {
+    height: 22px;
+    width: 22px;
+}
+
+.dataFieldChartTypeMenuIcon {
+    padding: 6px;
+    width: 32px;
+}
+
+.dataFieldChartTypeMenuRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dataFieldChartTypeMenuTooltip {
+    white-space: pre-line;
+}
+
+.dataFieldChartTypeCallout .ms-Dropdown-item {
+    height: 50px !important;
+}
+
+.ms-Button-flexContainer:has(.dataFieldChartTypeMenuIcon) {
+    display: inline-block;
+    width: auto;
+    height: auto;
+}
+
+.ms-Button.is-disabled:hover,
+.ms-Button.is-disabled i:hover,
+.ms-Button.is-disabled svg:hover,
+.ms-Button.is-disabled path:hover {
+    cursor: default;
+}
+
+.dataFieldChartTypeMenu {
+    padding: 10px 10px 0px 10px;
+    display: inline-block;
+    width: calc(100% - 20px);
+}
+
+.dataFieldChartTypeMenu svg {
+    width: 16px;
+}
+
+.dataFieldRemoveLabel {
+    font-weight: normal;
+    font-size: 12px;
+    padding-right: 8px;
+    padding-bottom: 6px;
+    padding-top: 6px;
+    border: none;
+}
+
+.dataFieldRemoveLabel .ms-Button-label {
+    font-weight: normal;
+}
+
+.dataFieldRemoveSection {
+    display: flex;
+    flex-direction: row;
+    flex-flow: row-reverse;
+}
+
+.dataFieldChartTypeMenuTitle {
+    margin: 0px 4px;
+    position: absolute;
+    display: inline-block;
+    width: 168px;
+    font-size: 12px;
+}
+
+.dataFieldChartTypeHeader {
+    font-size: 12px;
+    font-weight: normal;
+    padding: 3px 10px 0px 10px;
+    display: inline-block;
+    width: calc(100% - 20px);
+}
+
+.dataFieldExpanded .dataFieldLabel {
+    font-weight: bold;
+}
+
+.dataFieldChartTypeMenu .ms-Label {
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.wideDropdown .ms-Dropdown-title,
+.wideDropdown .ms-Dropdown .ms-Dropdown-title {
+    width: 100%;
+}
+
+.dataFieldCheckbox {
+    font-size: 12px;
+    padding: 10px 10px 0px 10px;
+}
+
+.dataFieldCheckbox .ms-Checkbox-checkbox {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    margin-right: 0;
+}
+
+.dataFieldCheckbox .ms-Checkbox-text {
+    font-size: 12px;
+}
+
+.dataFieldCheckbox.checkBoxControl.disabled.ms-Checkbox.is-checked .ms-Checkbox-checkbox,
+.dataFieldCheckbox.checkBoxControl.disabled.ms-Checkbox.is-checked:hover .ms-Checkbox-checkbox {
+    background-color: grey;
+    border-color: grey;
+}
+
+.clear {
+    clear: both;
+}
+
+.dataBindingWell .addFieldButton {
+    width: var(--datapane-width);
+    text-align: left;
+    cursor: default;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: none;
+    font-size: 12px;
+    height: 32px;
+}
+
+.dataBindingWell .ms-Icon {
+    font-size: 10pt;
+}
+
+.dataFieldSelected {
+    border-left-style: solid;
+    font-weight: bold;
+}
+
+/* Datasource and range picking UI */
+.sourceDisplayInput {
+    white-space: nowrap;
+    width: var(--datapane-width);
+}
+
+.fieldTitleDisplayInputField,
+.fieldDataDisplayInputField,
+.sourceDisplayInputField {
+    font-size: 12px;
+}
+
+.sourceDisplayWrapper {
+    margin-left: 20px;
+    width: var(--datapane-width);
+}
+
+/* Source edit, except when an error is being displayed
+   Under normal circumstances we want the select/cancel buttons to flow to the right
+   But we want the error message to flow down */
+.fieldTitleEditControlWrapper,
+.fieldDataEditControlWrapper,
+.sourceEditControlWrapper {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 4px;
+}
+
+.fieldTitleEditControlWrapperError,
+.fieldDataEditControlWrapperError,
+.sourceEditControlWrapperError {
+    display: flex;
+    flex-direction: column;
+}
+
+.fieldDataDisplayInput {
+    flex: 1;
+}
+
+/* Need to space it off to match the other boxes in the field edit expanded view */
+.fieldDataEditControlWrapperError {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.fieldTitleEditIcon,
+.fieldDataEditIcon,
+.sourceEditIcon .ms-Image-image {
+    height: 22px;
+}
+
+.refEditButtons {
+    display: flex;
+}
+
+#splitBy {
+    margin-top: 14px;
+}
+
+#splitBy .ms-ChoiceField {
+    margin-top: 0px;
+}
+
+#splitBy .ms-ChoiceFieldGroup-flexContainer {
+    display: flex;
+    align-items: center;
+}
+
+.splitByGroup .ms-Label,
+#hiddenEmptyWrapper .ms-Label,
+.splitByOption {
+    font-size: 12px;
+}
+
+.splitByOption svg {
+    margin: 2px 5px 0px 5px;
+}
+
+.showEmptyAs {
+    margin-bottom: 5px;
+}
+
+.showEmptyAs label {
+    font-weight: normal;
+}
+
+#hiddenEmptyWrapper .ms-Checkbox-text {
+    line-height: 16px;
+}
+
+.hiddenEmptyDropdown.dropdown-option {
+    max-width: unset;
+}
+
+/* data pane styles end */
+
+/* format pane styles begin */
+.formatPane {
+    margin-left: -4px;
+}
+
+.formatList {
+    padding-left: 20px;
+}
+
+.formatList-rtl {
+    padding-right: 15px;
+}
+
+.addRemoveIcon {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0% !important;
+}
+
+.firstNonExpandable {
+    margin-top: 12px;
+}
+
+.lastNonExpandable {
+    margin-bottom: 12px;
+}
+
+.formatFlatSectionList {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.formatFlatSectionListFirst {
+    margin-top: 12px;
+    margin-bottom: 24px;
+}
+
+.formatFlatSectionListLast {
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.formatFlatSectionListFirstLast {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.visualformat {
+    margin-bottom: 8px;
+    margin-top: 8px;
+    margin-right: 40px;
+    margin-left: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.visualformat-rtl {
+    margin-left: 40px;
+    margin-right: 0px;
+}
+
+.visualformat .ms-Label,
+.resetGroupFlexLeft .ms-Label {
+    font-weight: normal;
+    font-size: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.warningLabelMargin {
+    margin-top: 0px;
+}
+
+.ms-Label.flatListHeader {
+    font-size: 12px;
+    padding: 0px;
+}
+
+.ms-Label.sliderHeaderName {
+    font-size: 12px;
+    padding: 0px;
+    font-weight: normal;
+}
+
+.checkBoxControl {
+    align-items: center;
+    display: flex;
+}
+
+.checkBoxControl .ms-Checkbox-label {
+    align-items: center;
+}
+
+.checkBoxControl .ms-Checkbox-checkbox {
+    width: 12px;
+    height: 12px;
+}
+
+.checkBoxControl .ms-Checkbox-text {
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.visualformat .dropDownControl {
+    width: 120px;
+}
+
+.ms-Dropdown .ms-Dropdown-title {
+    font-size: 12px;
+    height: 24px;
+    line-height: 24px;
+    align-items: center;
+    padding-left: 8px;
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.ms-Dropdown .ms-Dropdown-caretDownWrapper {
+    height: 24px;
+    line-height: 24px;
+}
+
+.ms-Dropdown .ms-Button {
+    font-size: 12px !important;
+}
+
+.dropdown-option {
+    font-size: 12px;
+    white-space: nowrap;
+    max-width: 100px;
+}
+
+.dropdown-option-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.textFieldControl .ms-TextField-field {
+    font-size: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.textFieldControl .ms-TextField-fieldGroup {
+    height: 24px;
+    vertical-align: middle;
+}
+
+.resetGroupFlexLeft .smallTextFieldControl .ms-TextField-fieldGroup {
+    height: 24px;
+    width: 35px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.addGap {
+    gap: 10px;
+}
+
+.resetGroupFlexLeft.addGap .smallTextFieldControl .ms-TextField-fieldGroup {
+    margin-right: 0px;
+}
+
+.visualformat .ms-TextField-fieldGroup,
+.resetGroupFlexLeft .ms-TextField-fieldGroup {
+    width: 120px;
+}
+
+.sliderTextField .ms-TextField-fieldGroup {
+    width: 48px;
+}
+
+.colorControl .ms-Button--default {
+    height: 24px;
+    width: 34px;
+    min-width: 34px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0px;
+}
+
+.colorControl .ms-Button-menuIcon {
+    height: 16px;
+    width: 16px;
+    font-size: 8px;
+    margin: 0px;
+    font-weight: bolder;
+}
+
+.colorControl .ms-Button--CommandBar,
+.colorControl .ms-Button--commandBar {
+    height: 30px;
+    margin-right: 5px;
+    margin-top: 0px;
+    width: max-content;
+}
+
+.colorControl .ms-Button-icon {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+}
+
+.ms-Callout .ms-Dropdown-item {
+    min-height: 28px;
+    height: 28px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.comboBoxControl .ms-ComboBox {
+    height: 24px !important;
+    font-size: 12px !important;
+}
+
+.comboBoxControl .ms-ComboBox-CaretDown-button {
+    height: 24px !important;
+    width: 24px !important;
+    line-height: 20px !important;
+}
+
+.ms-ComboBox-callout .ms-Callout-main {
+    max-height: 300px !important;
+}
+
+.comboBoxControl .ms-ComboBox-optionsContainer button {
+    min-height: 24px;
+    height: 24px;
+}
+
+.comboBoxControl .ms-ComboBox-optionText {
+    font-size: 12px;
+}
+
+.ms-ComboBox-option {
+    height: 28px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px !important;
+}
+
+.visualformat .ms-ComboBox-container {
+    width: 120px;
+}
+
+.sliderControl .ms-Slider {
+    width: 100%;
+    height: 24px;
+}
+
+.sliderControl .ms-Button {
+    height: 24px;
+}
+
+.groupFlex,
+.resetGroupFlex,
+.doubleGroupFlex {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.groupFlex i {
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+    margin: 0px;
+}
+
+.groupFlex button {
+    height: 24px;
+    width: 24px;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.groupFlex .colorControl .is-disabled i {
+    cursor: default;
+}
+
+.resetGroupFlex {
+    margin-right: 16px;
+}
+
+.resetGroupFlex-rtl {
+    margin-right: inherit;
+    margin-left: 16px;
+}
+
+.resetGroupFlex i {
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+
+.resetGroupFlex i svg {
+    fill: none;
+}
+
+.resetGroupFlex button {
+    height: 24px;
+    width: 24px;
+    border-width: 1px;
+    border-style: solid;
+    outline: none;
+    padding: 0px;
+}
+
+.resetGroupFlexLeft {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.doubleGroupFlex {
+    justify-content: space-between;
+    margin-right: 40px;
+}
+
+.doubleGroupFlex-rtl {
+    margin-right: inherit;
+    margin-left: 40px;
+}
+
+.doubleGroupFlexLeft {
+    flex-grow: 1;
+}
+
+.doubleGroupFlexRight {
+    width: 120px;
+}
+
+.doubleGroupFlexSmall {
+    flex-basis: 60px; /*Font size ribbon button is 52px*/
+}
+
+.doubleGroupFlex .doubleGroupFlexRight .resetGroupFlex {
+    margin-right: 1px; /* When reset button is in doubleGroupFlexRight, margin right should be small to avoid overlapping */
+}
+
+.fillLineGroupFlex {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+}
+
+.fillGroupFlex {
+    margin-left: 0px;
+}
+
+.lineGroupFlex {
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.outlineFormatWeightDashes {
+    text-align: left;
+    font-size: 12px;
+    height: 32px;
+    padding: 0px 8px;
+}
+
+.outlineFormatWeightDashes .ms-Button-flexContainer {
+    width: 100%;
+}
+
+.outlineFormatWeightDashesCallout {
+    padding: 4px 0px;
+}
+
+.ms-ContextualMenu-Callout {
+    margin-bottom: -3px;
+}
+
+.ms-FocusZone.ms-ContextualMenu.is-open.ms-BaseButton-menuhost {
+    min-width: 125px;
+}
+
+.outlineFormatWeightLink {
+    width: 40px;
+    text-align: right;
+    padding-right: 8px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 5px;
+}
+
+.outlineFormatWeightSvgLink {
+    height: 20px;
+    width: 75px;
+    margin-top: 8px;
+}
+
+.outlineFormatDashLink {
+    vertical-align: middle;
+    margin-left: 5px;
+    margin-right: 5px;
+    height: 20px;
+    width: 118px;
+}
+
+/* format pane styles end */
+
+.bindingWellsNoWellsWarningBar {
+    width: 90%;
+}
+
+.ms-Label.noVisualIsSelectedMessageFormat {
+    margin-left: 20px;
+}
+
+/* feedback styles start */
+
+.feedback-button {
+    height: var(--feedbackButtonHeight);
+    margin-top: 4%;
+}
+
+/* feedback styles end */
+
+/* chevron animation start */
+.chevron {
+    -moz-transition: all 0.1s linear;
+    -webkit-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+}
+.chevron.chevron-down {
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+.chevron.chevron-down-rtl {
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+/* chevron animation end */
+
+/* breadcrumbs start */
+
+#breadcrumbs-container {
+    position: fixed;
+    top: 45px;
+    z-index: 2;
+}
+
+.breadcrumbs-hidden {
+    display: none;
+}
+/* breadcrumbs end */
+
+/* high contrast mode styles begin */
+
+@media screen and (-ms-high-contrast: active), (forced-colors: active) {
+    path.OfficeIconColors_HighContrast {
+        fill: buttonText;
+    }
+
+    svg > path[class*='OfficeIconColors_m']:not(.OfficeIconColors_HighContrast) {
+        fill: transparent;
+    }
+
+    .ms-ComboBox-option.is-checked {
+        outline: 2px dashed buttontext;
+        border: none;
+        background-color: highlight;
+    }
+
+    .ms-Button.is-checked {
+        background-color: highlight;
+    }
+
+    .ms-Button.is-disabled svg > path.OfficeIconColors_HighContrast {
+        fill: graytext;
+        border-color: graytext;
+    }
+
+    .ms-Button.is-checked svg > path.OfficeIconColors_HighContrast {
+        fill: highlighttext !important;
+    }
+
+    .splitByOption .ms-ChoiceField-field::before {
+        background-color: canvas;
+    }
+
+    .splitByOption .ms-ChoiceField-field.is-checked::before,
+    .splitByOption .ms-ChoiceField-field.is-checked::after {
+        border-color: highlight;
+    }
+
+    .splitByOption .ms-ChoiceField-field:hover::after {
+        background-color: canvastext;
+    }
+
+    #colorPickerNoneButton:is(:hover, :focus) svg > path.OfficeIconColors_HighContrast {
+        fill: highlighttext !important;
+    }
+
+    #colorPickerAutoButton:is(:hover, :focus) svg > path.OfficeIconColors_HighContrast {
+        fill: buttonface !important;
+    }
+
+    button:hover .dataFieldChartTypeMenuIcon svg > path.OfficeIconColors_HighContrast {
+        fill: highlighttext;
+    }
+}
