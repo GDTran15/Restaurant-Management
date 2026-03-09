@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class FoodCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foodCategoryId;
 
+    @NotBlank(message = "Category name cannot be blank")
     private String foodCategoryName;
 
     @OneToMany(mappedBy = "foodCategory")

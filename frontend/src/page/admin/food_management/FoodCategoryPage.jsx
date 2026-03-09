@@ -10,6 +10,8 @@ import axios from "axios";
 export default function FoodCategoryPage(){
     const[foodCategoryName,setFoodCategoryName] = useState("");
     const[foodCategories,setFoodCategory] = useState([]);
+    const[updateVerse,setUpdateVerse] = useState(false);
+    const[updateCategoryId,setUpdateCategoryId] = useState(0);
 
     const fetchFoodCategory = async () =>{
         try {
@@ -36,7 +38,28 @@ export default function FoodCategoryPage(){
                     }
                 }
             );
+            setFoodCategoryName("");
             fetchFoodCategory();
+            
+            } catch (error) {
+            console.error("Error creating category:", error);
+        }
+        };
+        
+    const updateCategoryName = async () => {
+            try {
+            const response = await axios.put(
+                `http://localhost:8080/food-categories/${updateCategoryId}`,
+                null, // no request body
+                {
+                    params: {
+                        foodCategoryName: foodCategoryName // sent as query param
+                    }
+                }
+            );
+            setFoodCategoryName("");
+            fetchFoodCategory();
+            setUpdateVerse(false);
             
             } catch (error) {
             console.error("Error creating category:", error);
@@ -63,10 +86,27 @@ export default function FoodCategoryPage(){
 
 
     return (<>
-
-                  <FormWrapper width ={"full"} title={"Add Category"} submitFuntion={createNewCategory} >
+            {updateVerse  ?  <FormWrapper width ={"full"} title={"Update Category"} submitFuntion={updateCategoryName} >
                     <InputField label={"Food Category Name"} value={foodCategoryName} setValue={setFoodCategoryName}/>
-                                        
+                    <div className="flex items-center gap-2">
+                    <Button  variant={"navy"} width={"w-50"} type={"submit"}>
+                                                    
+                    <div className="flex items-center gap-2 ">
+                       <IoIosAdd size={24} />
+                        <span>Update Category</span>
+                        </div>
+                     </Button>
+                    <Button  variant={"secondary"} width={"w-45"} type={"submit"} className={"border-gray-400"} 
+                    onClick={() => {setUpdateVerse(false)
+                        setFoodCategoryName("");
+                    }}
+                    >
+                        Cancel
+                     </Button>
+                     </div>
+                    </FormWrapper> : <FormWrapper width ={"full"} title={"Add Category"} submitFuntion={createNewCategory} >
+                    <InputField label={"Food Category Name"} value={foodCategoryName} setValue={setFoodCategoryName}/>
+
                     <Button  variant={"navy"} width={"w-45"} type={"submit"}>
                                                     
                     <div className="flex items-center gap-2 ">
@@ -74,7 +114,9 @@ export default function FoodCategoryPage(){
                         <span>Add Category</span>
                         </div>
                      </Button>
-                    </FormWrapper>
+                    </FormWrapper>}
+
+                  
 
                    <div className="mt-5 bg-white py-10 px-6 rounded-xl border-gray-300 border">
                     <table className="table-fixed w-full border border-gray-300">
@@ -92,7 +134,13 @@ export default function FoodCategoryPage(){
                                     <td className="border px-4 py-2 w-1/4">{foodCategory.numberOfFoodBelongToThisCategory}</td>
                                     <td className="border px-4 py-2 w-1/4 ">
                                     <div className="flex items-center justify-center gap-2">
-                                    <Button variant={"warning"}><FaEdit size={25}/></Button>    
+                                    <Button variant={"warning"}
+                                        onClick={() => {
+                                            setUpdateVerse(true);
+                                            setUpdateCategoryId(foodCategory.foodCategoryId);
+                                            setFoodCategoryName(foodCategory.foodCategoryName);
+                                        }}
+                                    ><FaEdit size={25}/></Button>    
                                     <Button variant={"danger"} className={"text-white"}
                                         onClick={() => deleteFoodCategory(foodCategory.foodCategoryId)}
                                     >
