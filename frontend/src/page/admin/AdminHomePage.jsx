@@ -4,7 +4,7 @@ import NavBar from "../../component/NavBar";
 import FoodManagementPage from "./FoodManagementPage";
 import MenuManagementPage from "./MenuManagementPage";
 import StaffManagementPage from "./StaffManagementPage";
-import TableManagementPage from "./TableManagementPage";
+import TableManagementPage from "./table/TableManagementPage";
 import AdminDashboardPage from "./AdminDashboardPage";
 
 export default function AdminHomePage(){
@@ -36,7 +36,7 @@ export default function AdminHomePage(){
 
     return(<>
         <NavBar currentPage={currentPage} username={adminName} setCurrentPage={setCurrentPage}/>
-        <main className="ml-sidebar">
+        <main className="ml-sidebar max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
             {mainContent}
         </main>
     </>)

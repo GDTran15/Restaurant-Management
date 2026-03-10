@@ -26,8 +26,8 @@ export default function FoodManagementPage() {
 
     return (
         <>
-            <div>
-                <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+            
+                
                     <nav className="bg-dark-cream mb-7 font-bold inline-flex space-x-1 p-1  rounded-2xl">
                         <ul onClick={() => setCurrentPage("add")} className={`horizontal-nav-bar ${currentPage === "add" ? "horizontal-nav-bar-active" : ""}`}>Add</ul>
                         <ul onClick={() => setCurrentPage("view")}  className={`horizontal-nav-bar ${currentPage === "view" ? "horizontal-nav-bar-active" : ""}`}>View</ul>
@@ -36,8 +36,8 @@ export default function FoodManagementPage() {
                     <div>
                         {mainContent}
                     </div>
-                </div>
-            </div>
+             
+         
         </>
     );
 }

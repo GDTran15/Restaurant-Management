@@ -14,13 +14,14 @@ export default function FoodCard({foodId,foodName,isAvailable,description,foodIm
     return(<>
         <div className="bg-white py-10 px-6 rounded-xl border-gray-300 border ">
             <div className="flex flex-col gap-5">
-                <div className="flex-1 flex">
-                    
+                <div className="flex-1 flex justify-between">
+                     <div className=" flex">
                     <img src={`/${foodImageUrl}`} className="w-32 h-32 object-cover rounded mr-4" alt="" />
                     <div>
                     <h5 className=" text-2xl text-main-navy font-bold">{foodName}</h5>
                     <h5 className=" text-gray-500">Category: {foodCategoryName}</h5>
                     <p className="text-gray-500">{description}</p>
+                    </div>
                     </div>
                     
                     <div className="h-10">

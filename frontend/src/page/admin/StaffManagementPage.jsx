@@ -18,7 +18,7 @@ export default function StaffManagementPage() {
                     <div>
                         <InputField label={"Password"}/>
                         
-                       <SelectInput label={"Role"}/>
+                       <SelectInput label={"Role"} />
                     </div>
                     <div className=" col-span-2">
                         

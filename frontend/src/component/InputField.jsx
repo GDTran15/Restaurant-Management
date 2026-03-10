@@ -1,4 +1,4 @@
-export default function InputField({ label, placeholder, inputType, value, setValue, step }) {
+export default function InputField({ label, placeholder, inputType, value, setValue, step ,error}) {
   const handleChange = (e) => {
     if (inputType === "number") {
       setValue(e.target.value === "" ? "" : parseFloat(e.target.value));
@@ -9,7 +9,14 @@ export default function InputField({ label, placeholder, inputType, value, setVa
 
   return (
     <div>
+      <div className="flex justify-between items-center">
       <label className="block text-base font-semibold mb-2">{label}</label>
+      {
+        error ? <i className="text-red-500">*{error}</i> : ""
+      }
+      
+      </div>
+      
       <input
         type={inputType}
         value={value}

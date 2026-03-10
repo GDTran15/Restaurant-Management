@@ -54,10 +54,12 @@ public class SecurityConfiguration {
                         authorizeRequests.requestMatchers("/register",
                                         "/login",
                                         "/food-categories/**",
+                                        "/tables/**",
                                         "/foods/**",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/swagger-ui.html",
+
                                 "/cookies"
                                 ).permitAll()
                                 .anyRequest().authenticated())

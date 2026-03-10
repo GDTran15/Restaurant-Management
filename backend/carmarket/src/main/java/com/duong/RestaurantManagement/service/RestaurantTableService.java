@@ -34,15 +34,19 @@ public class RestaurantTableService {
        return   restaurantTableRepo.findAll(Sort.by("restaurantTableNumber"))
                .stream()
                .map(table -> {
-                    GetTableDTO getTableDTO = new GetTableDTO(
-                            (long) table.getRestaurantTableId(),
-                            table.getRestaurantTableNumber(),
-                            table.isRestaurantTableStatus()
-                    );
-                    return getTableDTO;
+                   return new GetTableDTO(
+                           (long) table.getRestaurantTableId(),
+                           table.getRestaurantTableNumber(),
+                           table.isRestaurantTableStatus(),
+                           table.getCapacity()
+                   );
                })
                .toList();
 
 
+    }
+
+    public void removeTable(long tableId) {
+        restaurantTableRepo.deleteById(tableId);
     }
 }

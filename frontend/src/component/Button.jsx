@@ -13,7 +13,7 @@ export default function Button({children,type = "button",variant,width , classNa
     return (
         <button
             type={type}
-            className={`${variants[variant]} px-4 py-1 rounded-xl hover:opacity-90 mt-2 ${width} ${className}`}
+            className={`${variants[variant]} flex items-center justify-center px-4 py-1 rounded-xl hover:opacity-90 mt-2 ${width} ${className}`}
             onClick={onClick}
         >
             {children}
