@@ -6,7 +6,8 @@ export default function Button({children,type = "button",variant,width , classNa
         warning: "bg-yellow-300 text-black",
         danger: "bg-red-600 text-black",
         outline: "border border-gray-400 text-gray-700 bg-white",
-        secondary: "bg-gray-300"
+        secondary: "bg-gray-300",
+        
     }
 
     return (

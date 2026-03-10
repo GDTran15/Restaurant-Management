@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                         CorsConfigurationSource source = request -> {
                             CorsConfiguration configuration = new CorsConfiguration();
                             configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-                            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE","PATCH"));
                             configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                             configuration.setAllowCredentials(true);
                             return configuration;
@@ -54,7 +54,6 @@ public class SecurityConfiguration {
                         authorizeRequests.requestMatchers("/register",
                                         "/login",
                                         "/food-categories/**",
-                                       
                                         "/foods/**",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",

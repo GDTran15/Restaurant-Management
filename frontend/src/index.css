@@ -42,6 +42,11 @@ h1, h2, h3, h4 {
     .horizontal-nav-bar-active{
         @apply bg-white
     }
+
+    .food-edit-button{
+        @apply bg-input-bg border border-gray-300 text-main-navy
+        hover:bg-main-navy hover:text-white
+    }
     
 }
 

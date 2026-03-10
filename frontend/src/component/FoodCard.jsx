@@ -3,7 +3,9 @@ import Button from "./Button";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import axios from "axios";
 
-export default function FoodCard({foodId,foodName,isAvailable,description,foodImageUrl,quantity,price,foodCategoryName ,deleteFood}){
+export default function FoodCard({foodId,foodName,isAvailable,description,foodImageUrl,quantity,price,foodCategoryName ,deleteFood,handleUpdateFoodAvailable}){
+
+   
 
     
     
@@ -37,9 +39,14 @@ export default function FoodCard({foodId,foodName,isAvailable,description,foodIm
                     <p className=" text-2xl border mt-2 border-gray-400 px-2 rounded-xl">Qty: {quantity}</p>
                     <div className="flex gap-2 items-center">
                     
-                    <Button variant={"warning"}><FaEdit size={24}/></Button>    
-                    <Button variant={"warning"}>Disable</Button>    
-                     <Button variant={"danger"} className={"text-white"} onClick={() => deleteFood(foodId)} >
+                    <Button  className={"food-edit-button"}><FaEdit size={24}/></Button>  
+                    <Button className={"food-edit-button font-semibold"} onClick={handleUpdateFoodAvailable}>
+                        {isAvailable ? "Disable" 
+                    : "Enable" }
+                     
+                        </Button>    
+                    
+                     <Button  onClick={() => deleteFood(foodId)}  className={"food-edit-button"}>
                      <RiDeleteBin5Fill size={24}/>
                        </Button>
                     </div>

@@ -8,6 +8,8 @@ export default function ViewFoodPage(){
     const [page,setPage] = useState(0);  
       
     const [foodList,setFoodList] = useState([]);
+
+    
   
     const searchForFood = async (search) => {
         try {
@@ -29,6 +31,22 @@ export default function ViewFoodPage(){
             console.log(error)
         }
     }
+
+     const changeFoodAvailability = async (foodId,isAvailable) => {
+        console.log(isAvailable)
+        try {
+            const response = await axios.patch(`http://localhost:8080/foods/${foodId}/available`,null,{
+                params : {
+                    available: !isAvailable
+                }
+            })
+            console.log(response)
+            searchForFood(search)
+        } catch (error) {
+            console.log(error)
+        }   
+    }
+    
 
     useEffect(() => {
         searchForFood();
@@ -53,6 +71,7 @@ export default function ViewFoodPage(){
                      price={food.price}
                      description={food.description}
                      deleteFood={deleteFood}
+                     handleUpdateFoodAvailable={() => changeFoodAvailability(food.foodId,food.isAvailable)}
                      />
                    
                 ))}
