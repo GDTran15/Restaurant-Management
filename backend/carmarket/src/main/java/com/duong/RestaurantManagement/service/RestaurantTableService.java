@@ -1,12 +1,16 @@
 package com.duong.RestaurantManagement.service;
 
 import com.duong.RestaurantManagement.dto.table.request.AddTableDTO;
+import com.duong.RestaurantManagement.dto.table.response.GetTableDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.model.RestaurantTable;
 import com.duong.RestaurantManagement.repo.RestaurantTableRepo;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,5 +28,21 @@ public class RestaurantTableService {
                 .restaurantTableStatus(true)
                 .build();
         restaurantTableRepo.save(restaurantTable);
+    }
+
+    public List<GetTableDTO>  getAllTables() {
+       return   restaurantTableRepo.findAll(Sort.by("restaurantTableNumber"))
+               .stream()
+               .map(table -> {
+                    GetTableDTO getTableDTO = new GetTableDTO(
+                            (long) table.getRestaurantTableId(),
+                            table.getRestaurantTableNumber(),
+                            table.isRestaurantTableStatus()
+                    );
+                    return getTableDTO;
+               })
+               .toList();
+
+
     }
 }
