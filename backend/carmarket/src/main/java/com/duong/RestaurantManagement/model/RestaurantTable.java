@@ -22,8 +22,8 @@ public class RestaurantTable {
 
     private int capacity;
 
-    @Enumerated(EnumType.STRING)
-    private RestaurantTableStatus restaurantTableStatus;
+
+    private boolean restaurantTableStatus;
 
     @OneToMany(mappedBy = "restaurantTable")
     private List<DiningSession> diningSessions;
