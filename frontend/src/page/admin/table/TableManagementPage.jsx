@@ -24,6 +24,8 @@ export default function TableManagementPage() {
                 tableNumber : restaurantTableNumber,
                 capacity : capacity
             })
+            setRestaurantTableNumber(null);
+            setCapacity(null);
             handleGetTable();
         } catch (error) {
             console.log(error.response);

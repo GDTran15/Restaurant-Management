@@ -2,7 +2,7 @@
 import { use, useState } from "react";
 import NavBar from "../../component/NavBar";
 import FoodManagementPage from "./FoodManagementPage";
-import MenuManagementPage from "./MenuManagementPage";
+import MenuManagementPage from "./menu/MenuManagementPage";
 import StaffManagementPage from "./StaffManagementPage";
 import TableManagementPage from "./table/TableManagementPage";
 import AdminDashboardPage from "./AdminDashboardPage";

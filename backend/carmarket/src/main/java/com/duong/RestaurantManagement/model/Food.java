@@ -13,14 +13,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Builder
-@Table(name = "foods")
+@Table(name = "menu_items")
 public class Food {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long foodId;
+    private Long menuItemId;
 
-    private String foodName;
+    private String menuItemName;
 
     private boolean isAvailable;
 
@@ -28,12 +28,12 @@ public class Food {
 
     private int quantity;
 
-    private String foodImageUrl;
+    private String menuItemImageUrl;
 
     private double price;
 
-    @OneToMany(mappedBy = "food")
-    private List<MenuItem> menuItems;
+    @ManyToOne
+    private Menu menu;
 
     @OneToMany(mappedBy = "food")
     private List<FoodCategoryMap> foodCategoryMaps;
