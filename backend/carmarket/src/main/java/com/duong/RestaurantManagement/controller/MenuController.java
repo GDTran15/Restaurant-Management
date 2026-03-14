@@ -2,6 +2,7 @@ package com.duong.RestaurantManagement.controller;
 
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
+import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +33,14 @@ public class MenuController {
         return ResponseEntity.ok(message);
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<GetListOfMenuDTO>> getAllMenus() {
         return ResponseEntity.ok(menuService.getMenuLists());
+    }
+
+    @GetMapping("/options")
+    public ResponseEntity<List<GetMenuAsOption>> getMenuOptions() {
+        return ResponseEntity.ok(menuService.getMenuForOption());
     }
 
 }

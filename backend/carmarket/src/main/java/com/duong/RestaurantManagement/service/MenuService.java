@@ -3,6 +3,7 @@ package com.duong.RestaurantManagement.service;
 
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
+import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.model.Menu;
 import com.duong.RestaurantManagement.repo.MenuRepo;
@@ -19,6 +20,7 @@ import java.util.NoSuchElementException;
 public class MenuService {
 
     private final MenuRepo menuRepo;
+
 
     @Transactional
     public void createNewMenu(AddMenuRequestDTO addMenuRequestDTO) {
@@ -49,5 +51,17 @@ public class MenuService {
 
     public  List<GetListOfMenuDTO> getMenuLists() {
      return  menuRepo.getListOfMenu();
+    }
+
+    public List<GetMenuAsOption> getMenuForOption() {
+        return menuRepo.findAll()
+                .stream()
+                .map(menu ->{
+                    return new GetMenuAsOption(
+                            menu.getMenuId(),
+                            menu.getMenuName()
+                    );
+                        }
+                ).toList();
     }
 }

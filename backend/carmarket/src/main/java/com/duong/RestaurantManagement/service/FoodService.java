@@ -8,6 +8,7 @@ import com.duong.RestaurantManagement.exception.FoodAvailabilityException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.Food;
 import com.duong.RestaurantManagement.repo.FoodRepo;
+import com.duong.RestaurantManagement.repo.MenuRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ public class FoodService {
 
     private final FoodRepo foodRepo;
     private final FoodCategoryMapService foodCategoryMapService;
+    private final MenuRepo menuRepo;
 
 
     @Transactional
@@ -34,6 +36,9 @@ public class FoodService {
                 .description(addFoodRequestDTO.description())
                 .foodImageUrl(addFoodRequestDTO.foodImageUrl())
                 .quantity(addFoodRequestDTO.quantity())
+                .menu(menuRepo.findById(addFoodRequestDTO.menuId()).orElseThrow(
+                        () -> new ResourceNotFoundException("Menu not found")
+                ))
                 .build();
         foodRepo.save(newFood);
         foodCategoryMapService.mapFoodToCategory(newFood,addFoodRequestDTO.foodCategoryId());
