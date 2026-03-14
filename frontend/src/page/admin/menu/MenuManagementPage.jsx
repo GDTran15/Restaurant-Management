@@ -2,12 +2,14 @@ import { IoIosAdd } from "react-icons/io";
 import Button from "../../../component/Button";
 import FormWrapper from "../../../component/FormWrapper";
 import InputField from "../../../component/InputField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import MenuCard from "../../../component/MenuCard";
 
 export default function MenuManagementPage() {
     const [menuName,setMenuName] = useState("");
     const [menuDescription,setMenuDescription] = useState("");
+    const [menuList,setMenuList] = useState([]);
 
      const handleAddMenu = async () => {
       
@@ -17,6 +19,7 @@ export default function MenuManagementPage() {
                 menuName : menuName,
                 menuDescription : menuDescription
             })
+            handleGetMenu();
             setMenuName("");
             setMenuDescription("");
            
@@ -25,8 +28,24 @@ export default function MenuManagementPage() {
            
         }
     }
+     const handleGetMenu = async () => {
+      
+        try {
+            const response = await axios.get(`http://localhost:8080/menus`)
+            setMenuList(response.data);
+            
+           
+        } catch (error) {
+            console.log(error.response);
+           
+        }
+    }
 
-    return (
+    useEffect(() => {
+        handleGetMenu();
+    },[])
+
+    return (<>
         <div>
         <FormWrapper width ={"full"} title={"Add Menu"} submitFuntion={handleAddMenu}>
              <div className="grid md:grid-cols-2  grid-cols-1 gap-3">
@@ -44,5 +63,16 @@ export default function MenuManagementPage() {
                                                     
               </FormWrapper>
            </div>
+        <div className="mt-5 grid md:grid-cols-3 gap-5">
+                {menuList.map(menu => (
+                    <MenuCard menuId={menu.menuId} 
+                    menuName={menu.menuName}
+                    menuDescription={menu.menuDescription}
+                    isAvailable={menu.isAvailable}
+                    numberOfFoods={menu.numberOfFoods}
+                    />
+                ))}
+        </div>
+        </>
     );
 }
