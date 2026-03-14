@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public record AddMenuRequestDTO(
         @NotBlank
         String menuName,
-        @NotNull
-        boolean activate
+        @NotBlank
+        String menuDescription
 ) {
 }

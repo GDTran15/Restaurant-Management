@@ -22,8 +22,10 @@ public class Menu {
 
     private String menuName;
 
+    private String menuDesc;
+
     private boolean isActivated;
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuItem> menuItems;
+    private List<Food> foods;
 }

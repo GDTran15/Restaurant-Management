@@ -1,14 +1,17 @@
 package com.duong.RestaurantManagement.controller;
 
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
+import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
 import com.duong.RestaurantManagement.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/menu")
+@RequestMapping("/menus")
 @RequiredArgsConstructor
 public class MenuController {
 
@@ -27,6 +30,11 @@ public class MenuController {
     ){
        String message = menuService.changeMenuActivation(menuId,active);
         return ResponseEntity.ok(message);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GetListOfMenuDTO>> getAllMenus() {
+        return ResponseEntity.ok(menuService.getMenuLists());
     }
 
 }

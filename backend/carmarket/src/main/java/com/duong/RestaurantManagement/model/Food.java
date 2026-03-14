@@ -13,14 +13,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Builder
-@Table(name = "menu_items")
+@Table(name = "foods")
 public class Food {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long menuItemId;
+    private Long foodId;
 
-    private String menuItemName;
+    private String foodName;
 
     private boolean isAvailable;
 
@@ -28,7 +28,7 @@ public class Food {
 
     private int quantity;
 
-    private String menuItemImageUrl;
+    private String foodImageUrl;
 
     private double price;
 
