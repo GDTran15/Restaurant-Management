@@ -27,11 +27,6 @@ public record AddFoodRequestDTO(
         double price,
 
         @NotNull(message = "Food category must be selected")
-        Long foodCategoryId,
-
-        @NotNull(message = "Menu must be selected")
-        Long menuId
-
-
+        Long foodCategoryId
 ) {
 }

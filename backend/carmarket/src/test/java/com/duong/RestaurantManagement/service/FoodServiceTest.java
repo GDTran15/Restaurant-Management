@@ -2,6 +2,8 @@ package com.duong.RestaurantManagement.service;
 
 import com.duong.RestaurantManagement.dto.food.request.AddFoodRequestDTO;
 import com.duong.RestaurantManagement.repo.FoodRepo;
+import com.duong.RestaurantManagement.serviceImp.FoodCategoryMapService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,8 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Food Service Unit Tests")
@@ -21,7 +21,7 @@ class FoodServiceTest {
     private FoodCategoryMapService foodCategoryMapService;
 
     @InjectMocks
-    private FoodService foodService; // class to test
+    private com.duong.RestaurantManagement.service.FoodService foodService; // class to test
 
     @Nested
     @DisplayName("Create Food Test")

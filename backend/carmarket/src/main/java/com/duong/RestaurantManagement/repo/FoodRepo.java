@@ -1,8 +1,10 @@
 package com.duong.RestaurantManagement.repo;
 
 import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.model.Food;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,5 +31,20 @@ public interface FoodRepo extends JpaRepository<Food, Long> {
          where lower(f.foodName) like lower(concat('%', :search, '%'))
            
 """)
-    Page<GetFoodListDTO> findAllFoodWithCategoryName(Pageable pageable,@Param("search") String search);
+    Page<GetFoodListDTO> findAllFoodWithFoodName(Pageable pageable,@Param("search") String search);
+
+    @Query("""
+    select new com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO(
+    f.foodId,
+    f.foodName,
+    f.price,
+    f.isAvailable
+    ) from Food f
+    where (lower(f.foodName) like lower(concat('%', :search, '%'))) and
+    not exists (select 1 from MenuItem mi
+    where mi.food.foodId = f.foodId
+    and mi.menu.menuId = :menuId
+    )
+""")
+    Page<GetFoodOfMenuDTO> getFoodsToAddInMenu(Pageable pageable,@Param("search") String search,@Param("menuId") Long menuId);
 }

@@ -12,20 +12,23 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
+@Table(name = "menu_items")
 @Builder
-@Table(name = "menus")
-public class Menu {
+public class MenuItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long menuId;
+    private Long menuItemId;
 
-    private String menuName;
 
-    private String menuDesc;
+    @ManyToOne
+    @JoinColumn(name = "food_id")
+    private Food food;
 
-    private boolean isActivated;
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuItem> menuItems;
+
+
 }

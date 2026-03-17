@@ -1,4 +1,4 @@
-package com.duong.RestaurantManagement.service;
+package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.model.User;
 import com.duong.RestaurantManagement.model.UserPrincipal;

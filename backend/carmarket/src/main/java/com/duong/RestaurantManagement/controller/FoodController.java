@@ -3,19 +3,13 @@ package com.duong.RestaurantManagement.controller;
 import com.duong.RestaurantManagement.dto.food.request.AddFoodRequestDTO;
 import com.duong.RestaurantManagement.dto.food.request.UpdateFoodRequestDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
-import com.duong.RestaurantManagement.model.Food;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.service.FoodService;
+
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.web.PagedModel;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/foods")
@@ -52,6 +46,18 @@ public class FoodController {
 
         return ResponseEntity.ok(foodService.getFoodList(page, size, search));
     }
+
+    @GetMapping("/for-menu")
+    public ResponseEntity<Page<GetFoodOfMenuDTO>> getFoodListToAddIntoMenu(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam Long menuId
+    ){
+        return ResponseEntity.ok(foodService.getFoodListToAddIntoMenu(page, size, search,menuId));
+    }
+
+
     @DeleteMapping("/{foodId}")
     public ResponseEntity<String> deleteFood(@PathVariable Long foodId) {
         foodService.removeFood(foodId);

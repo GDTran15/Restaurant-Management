@@ -32,8 +32,7 @@ public class Food {
 
     private double price;
 
-    @ManyToOne
-    private Menu menu;
+
 
     @OneToMany(mappedBy = "food")
     private List<FoodCategoryMap> foodCategoryMaps;
@@ -41,5 +40,6 @@ public class Food {
     @OneToMany(mappedBy = "food")
     private List<OrderItem> orderItems;
 
-
+    @OneToMany(mappedBy = "food")
+    private List<MenuItem> menuItems;
 }

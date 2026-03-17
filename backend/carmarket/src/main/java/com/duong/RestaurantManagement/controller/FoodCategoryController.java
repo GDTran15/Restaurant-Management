@@ -1,9 +1,7 @@
 package com.duong.RestaurantManagement.controller;
 
-import com.duong.RestaurantManagement.dto.food.request.UpdateFoodRequestDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetAllFoodCategoryDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryAndFoodCountDTO;
-import com.duong.RestaurantManagement.model.FoodCategory;
 import com.duong.RestaurantManagement.service.FoodCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
