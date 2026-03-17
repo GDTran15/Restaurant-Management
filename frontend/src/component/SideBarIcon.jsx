@@ -1,13 +1,16 @@
- export default function SideBarIcon({icon, text,onClick,pageKey,currentPage }){
-    
+import { NavLink } from "react-router-dom";
 
-
-    return(<>
-    <div className={`sidebar-icon ${pageKey === currentPage ? "sidebar-icon-active" : ""} `} onClick={onClick} >
-        <span>{icon}</span>
+export default function SideBarIcon({ icon, text, to }) {
+  return (
+    <NavLink
+      to={to}
+      end={to === "/admin"}
+      className={({ isActive }) =>
+        `sidebar-icon ${isActive ? "sidebar-icon-active" : ""}`
+      }
+    >
+      <span>{icon}</span>
       <h4>{text}</h4>
-     </div>
-        
-    </>)
-        
-    };
+    </NavLink>
+  );
+}

@@ -17,8 +17,7 @@ export default function AddFoodPage() {
     const [imageUrl, setImageUrl] = useState("");
     const [isAvailable, setIsAvailable] = useState(false);
     const [foodCategories,setFoodCategories] = useState([]);
-   const   [menuList,setMenuList] =useState([]);
-   const [menuId,setMenuId] = useState("");
+ 
 
     const handleAddFood = async () => {
         
@@ -31,7 +30,7 @@ export default function AddFoodPage() {
                 foodImageUrl : imageUrl,
                 price,
                 foodCategoryId: categoryId,
-                menuId: menuId
+            
             })
             console.log(response.data);
             setFoodName("");
@@ -56,23 +55,14 @@ export default function AddFoodPage() {
             console.log(error);
         }
     }
-        const fetchMenu = async () =>{
-        try {
-            const response = await axios.get(`http://localhost:8080/menus/options`);
-            
-            setMenuList(response.data);
-            
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
+   
+  
 
 
     
         useEffect(() => {
             fetchFoodCategory();
-            fetchMenu();
+            
         }, []);
 
        
@@ -95,13 +85,12 @@ export default function AddFoodPage() {
                                 <div className=" col-span-2">
                                     <InputField  label={"Description"} value={description} setValue={setDescription}/>
                                 </div>
-                                    <SelectInput label={"Menu"} value={menuId} setValue={setMenuId} itemList={menuList} itemName={"menuName"} itemValue={"menuId"} />
 
-                                   
+                                   <UploadImage label={"Food Image"} value={imageUrl} setValue={setImageUrl}/>
                                     <div className="flex justify-start items-end col-span-2 mb-3 md:col-span-1 md:justify-end" >
                                     <Switch value={isAvailable} setValue={setIsAvailable} />
                                     </div>
-                                     <UploadImage label={"Food Image"} value={imageUrl} setValue={setImageUrl}/>
+                                     
                             </div >
 
                             
