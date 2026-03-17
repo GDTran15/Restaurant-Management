@@ -2,7 +2,7 @@ package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
-import com.duong.RestaurantManagement.dto.menu.request.FoodsAtIntoMenu;
+import com.duong.RestaurantManagement.dto.menu.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
@@ -17,6 +17,8 @@ import com.duong.RestaurantManagement.repo.MenuRepo;
 import com.duong.RestaurantManagement.service.MenuService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -80,32 +82,21 @@ public class MenuServiceImp implements MenuService {
         Menu menu = menuRepo.findById(menuId)
                 .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
 
-        List<GetFoodOfMenuDTO> foodList = menu.getMenuItems()
-                .stream()
-                .map(menuItem -> new GetFoodOfMenuDTO(
-                        menuItem.getFood().getFoodId(),
-                        menuItem.getFood().getFoodName(),
-                        menuItem.getFood().getPrice(),
-                        menuItem.getFood().isAvailable()
-                ))
-                .toList();
-
         return new MenuDetailResponseDTO(
                 menu.getMenuId(),
                 menu.getMenuName(),
                 menu.getMenuDesc(),
-                menu.isActivated(),
-                foodList
+                menu.isActivated()
         );
     }
 
     @Override
     @Transactional
-    public void addMenuItems(FoodsAtIntoMenu foodsAtIntoMenu, Long menuId) {
+    public void addMenuItems(FoodsAddIntoMenu foodsAtIntoMenu, Long menuId) {
         Menu menu = menuRepo.findById(menuId)
                 .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
 
-        for (Long foodId : foodsAtIntoMenu.foods()) {
+        for (Long foodId : foodsAtIntoMenu.foodIdList()) {
             Food food = foodRepo.findById(foodId)
                     .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
 
@@ -117,4 +108,13 @@ public class MenuServiceImp implements MenuService {
             menuItemRepo.save(menuItem);
         }
     }
+
+    @Override
+    public Page<GetFoodOfMenuDTO> getFoodOfMenu(Long menuId, int page, int size, String search) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return menuRepo.getFoodOfMenu(pageable, search, menuId,search);
+
+    }
+
+
 }

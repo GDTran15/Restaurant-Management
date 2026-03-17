@@ -1,7 +1,8 @@
 package com.duong.RestaurantManagement.controller;
 
+import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
-import com.duong.RestaurantManagement.dto.menu.request.FoodsAtIntoMenu;
+import com.duong.RestaurantManagement.dto.menu.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
@@ -9,6 +10,8 @@ import com.duong.RestaurantManagement.service.MenuService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +32,7 @@ public class MenuController {
     }
 
     @PostMapping("/{menuId}/foods")
-    public ResponseEntity<String> addFoodsIntoMenu(FoodsAtIntoMenu foodsAtIntoMenu, @PathVariable Long menuId) {
+    public ResponseEntity<String> addFoodsIntoMenu(@RequestBody FoodsAddIntoMenu foodsAtIntoMenu, @PathVariable Long menuId) {
         menuService.addMenuItems(foodsAtIntoMenu,menuId);
         return ResponseEntity.ok("Menu successfully added");
     }
@@ -52,9 +55,22 @@ public class MenuController {
         return ResponseEntity.ok(menuService.getMenuForOption());
     }
 
+
+
     @GetMapping("/{menuId}")
     public ResponseEntity<MenuDetailResponseDTO> getMenuDetails(@PathVariable Long menuId) {
         return ResponseEntity.ok(menuService.getMenuDetailsById(menuId));
     }
+
+    @GetMapping("/{menuId}/foods")
+    public ResponseEntity<Page<GetFoodOfMenuDTO>> getFoodOfMenu(@PathVariable Long menuId,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "9") int size,
+                                                                @RequestParam(defaultValue = "") String search
+    ) {
+        return ResponseEntity.ok(menuService.getFoodOfMenu(menuId,page,size,search));
+    }
+
+
 
 }

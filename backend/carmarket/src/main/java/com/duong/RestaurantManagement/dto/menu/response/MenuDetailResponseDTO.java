@@ -8,7 +8,7 @@ public record MenuDetailResponseDTO(
         Long menuId,
         String menuName,
         String menuDescription,
-        boolean isAvailable,
-        List<GetFoodOfMenuDTO> foodOfMenu
+        boolean isAvailable
+
 ) {
 }
