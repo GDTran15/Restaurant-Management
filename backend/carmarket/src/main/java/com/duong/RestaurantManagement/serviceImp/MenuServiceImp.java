@@ -7,6 +7,7 @@ import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
+import com.duong.RestaurantManagement.exception.MenuModificationNotAllowedException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.Food;
 import com.duong.RestaurantManagement.model.Menu;
@@ -14,6 +15,7 @@ import com.duong.RestaurantManagement.model.MenuItem;
 import com.duong.RestaurantManagement.repo.FoodRepo;
 import com.duong.RestaurantManagement.repo.MenuItemRepo;
 import com.duong.RestaurantManagement.repo.MenuRepo;
+import com.duong.RestaurantManagement.service.DiningSessionService;
 import com.duong.RestaurantManagement.service.MenuService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class MenuServiceImp implements MenuService {
     private final MenuRepo menuRepo;
     private final FoodRepo foodRepo;
     private final MenuItemRepo menuItemRepo;
+    private final DiningSessionService diningSessionService;
 
     @Override
     @Transactional
@@ -114,6 +117,35 @@ public class MenuServiceImp implements MenuService {
         PageRequest pageable = PageRequest.of(page, size);
         return menuRepo.getFoodOfMenu(pageable, search, menuId,search);
 
+    }
+
+    @Override
+    public boolean checkIfMenuIsActive(Long menuId) {
+        return menuRepo.existsByMenuIdAndIsActivatedTrue(menuId);
+    }
+
+    @Override
+    public void activateMenu(Long menuId) {
+        boolean checkIfAnyMenuCurrentlyActive = menuRepo.existsByIsActivatedTrue();
+        if (checkIfAnyMenuCurrentlyActive) {
+            throw new MenuModificationNotAllowedException("Cannot activate menu during other menu activation");
+        }
+        Menu menu = menuRepo.findById(menuId)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
+        menu.setActivated(true);
+        menuRepo.save(menu);
+    }
+
+    @Override
+    public void deactivateMenu(Long menuId) {
+
+        if (diningSessionService.checkIfAnyDinningSessionActive()) {
+            throw new MenuModificationNotAllowedException("Cannot deactivate menu during dining session");
+        }
+        Menu menu = menuRepo.findById(menuId)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
+        menu.setActivated(false);
+        menuRepo.save(menu);
     }
 
 

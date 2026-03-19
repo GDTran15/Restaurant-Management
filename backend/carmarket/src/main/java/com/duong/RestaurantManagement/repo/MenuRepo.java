@@ -1,21 +1,16 @@
 package com.duong.RestaurantManagement.repo;
 
-import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
-import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
 import com.duong.RestaurantManagement.model.Menu;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface MenuRepo extends JpaRepository<Menu, Long> {
@@ -48,4 +43,9 @@ public interface MenuRepo extends JpaRepository<Menu, Long> {
              and m.menuId = :menuId
     """)
     Page<GetFoodOfMenuDTO> getFoodOfMenu(Pageable pageable, String search, @Param("menuId") Long menuId, @Param("search") String search1);
+
+    boolean existsByMenuIdAndIsActivatedTrue(Long menuId);
+
+    boolean existsByIsActivatedTrue();
 }
+

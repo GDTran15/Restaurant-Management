@@ -31,11 +31,7 @@ public class MenuController {
         return ResponseEntity.ok("Menu successfully added");
     }
 
-    @PostMapping("/{menuId}/foods")
-    public ResponseEntity<String> addFoodsIntoMenu(@RequestBody FoodsAddIntoMenu foodsAtIntoMenu, @PathVariable Long menuId) {
-        menuService.addMenuItems(foodsAtIntoMenu,menuId);
-        return ResponseEntity.ok("Menu successfully added");
-    }
+
     @PutMapping("/{menuId}")
     public ResponseEntity<String> toggleMenu(
             @PathVariable Long menuId,
@@ -71,6 +67,17 @@ public class MenuController {
         return ResponseEntity.ok(menuService.getFoodOfMenu(menuId,page,size,search));
     }
 
+    @PatchMapping("/{menuId}/activate")
+    public ResponseEntity<Void> activateMenu(@PathVariable Long menuId) {
+        menuService.activateMenu(menuId);
+         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{menuId}/deactivate")
+    public ResponseEntity<String> deactivateMenu(@PathVariable Long menuId) {
+        menuService.deactivateMenu(menuId);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

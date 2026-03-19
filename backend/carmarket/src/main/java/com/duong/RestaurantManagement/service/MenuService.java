@@ -26,4 +26,10 @@ public interface MenuService {
     void addMenuItems(FoodsAddIntoMenu  foodsAtIntoMenu, Long menuId);
 
      Page<GetFoodOfMenuDTO> getFoodOfMenu(Long menuId, int page, int size, String search);
+
+     boolean checkIfMenuIsActive(Long menuId);
+
+    void activateMenu(Long menuId);
+
+    void deactivateMenu(Long menuId);
 }
