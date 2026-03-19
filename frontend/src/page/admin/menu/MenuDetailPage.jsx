@@ -44,6 +44,21 @@ export default function MenuDetailPage(){
         }
     }
 
+     const handleDeleteMenuItem = async (menuId,foodId) => {
+       
+      try {
+        const response = await axios.delete(`http://localhost:8080/menu-items`,{
+            params:{
+                     menuId : menuId,
+                     foodId : foodId
+            } 
+        })
+        handleGetMenuFood();
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
     useEffect(() => {
         handleGetMenu();
         handleGetMenuFood();
@@ -120,7 +135,7 @@ export default function MenuDetailPage(){
                             {food.isAvailable ? "Available" : "Unavailable"}
                          </div>
                             <div className="col-span-2 flex  justify-center items-center">
-                                <Button className={"text-red-500 bg-red-200"}><RiDeleteBin5Fill size={25} /></Button>
+                                <Button className={"text-red-500 bg-red-200"}><RiDeleteBin5Fill size={25} onClick={() => handleDeleteMenuItem(menuId,food.foodId)} /></Button>
                             </div>
                               
                 </div>

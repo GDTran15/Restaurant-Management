@@ -49,6 +49,13 @@ public class GlobalExceptionHandler {
                         new ErrorApiResponse(HttpStatus.CONFLICT.value(), e.getMessage())
                 );
     }
+    @ExceptionHandler(value = MenuModificationNotAllowedException.class)
+    public ResponseEntity<ErrorApiResponse> menuCannotModified(MenuModificationNotAllowedException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(
+                        new ErrorApiResponse(HttpStatus.CONFLICT.value(), e.getMessage())
+                );
+    }
 
 
 

@@ -29,7 +29,8 @@ export default function AddFoodIntoMenu({menuName, menuId, setModalIsShow,fetchM
 
     const handleAddFoodIntoMenu = async () => {
       try {
-          const response = await axios.post(`http://localhost:8080/menus/${menuId}/foods`,{
+          const response = await axios.post(`http://localhost:8080/menu-items`,{
+            menuId: menuId,
             foodIdList: foodsAddIntoMenuId
           })
            console.log(response)
@@ -49,6 +50,9 @@ export default function AddFoodIntoMenu({menuName, menuId, setModalIsShow,fetchM
       }
     );
     }
+
+   
+
     const removeFood = (foodId) => {
       setFoodsAddIntoMenu(prev => prev.filter(food => food.foodId !== foodId))
       setFoodsAddIntoMenuId(prev => prev.filter(id => id !== foodId));

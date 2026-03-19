@@ -35,4 +35,6 @@ public class RestaurantTableController {
         return ResponseEntity.ok("Table removed");
     }
 
+
+
 }

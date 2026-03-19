@@ -20,7 +20,7 @@ public class DiningSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long DiningSessionId;
+    private Long diningSessionId;
 
     private LocalDateTime startAt;
 

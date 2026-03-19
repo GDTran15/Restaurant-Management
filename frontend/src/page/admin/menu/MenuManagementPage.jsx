@@ -70,6 +70,7 @@ export default function MenuManagementPage() {
                     menuDescription={menu.menuDescription}
                     isAvailable={menu.isAvailable}
                     numberOfFoods={menu.numberOfFoods}
+                    handleGetMenu={handleGetMenu}
                     />
                 ))}
         </div>
