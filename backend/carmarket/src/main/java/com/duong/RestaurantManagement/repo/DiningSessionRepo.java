@@ -12,6 +12,8 @@ public interface DiningSessionRepo extends JpaRepository<DiningSession, Long> {
 
     boolean existsByDiningStatus(DiningStatus diningStatus);
 
+    Optional<DiningSession> findByDiningStatusAndDiningSessionId(DiningStatus diningStatus, Long diningSessionId);
+
     Optional<DiningSession> findByDiningStatusAndRestaurantTable_TableQrCodeValue(DiningStatus diningStatus, String restaurantTableTableQrCodeValue);
 
     DiningSession getByDiningStatusAndRestaurantTable_TableQrCodeValue(DiningStatus diningStatus, String restaurantTable_tableQrCodeValue );

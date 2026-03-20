@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.dining_session.response.GetDiningSessionDTO;
+import com.duong.RestaurantManagement.exception.DiningSessionNotActiveException;
 import com.duong.RestaurantManagement.model.DiningSession;
 import com.duong.RestaurantManagement.model.DiningStatus;
 import com.duong.RestaurantManagement.repo.DiningSessionRepo;
@@ -42,4 +43,14 @@ public class DiningSessionServiceImp implements DiningSessionService {
             return new GetDiningSessionDTO(diningSession.getDiningSessionId());
 
     }
+
+    @Override
+    public DiningSession validateDiningSessionActiveStatus(Long diningSessionId) {
+        return diningSessionRepo.findByDiningStatusAndDiningSessionId(DiningStatus.ACTIVE,diningSessionId)
+                .orElseThrow(
+                        () -> new DiningSessionNotActiveException("Dining Session Not Active")
+                );
+
+    }
+
 }
