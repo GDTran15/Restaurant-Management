@@ -2,6 +2,7 @@ package com.duong.RestaurantManagement.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Table(name = "orders")
+@Builder
 public class Order {
 
     @Id
@@ -20,6 +22,8 @@ public class Order {
     private int orderId;
 
     private LocalDateTime createdAt;
+
+    private double orderPrice;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
