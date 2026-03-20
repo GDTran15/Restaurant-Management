@@ -12,6 +12,7 @@ import MenuManagementPage from './page/admin/menu/MenuManagementPage.jsx'
 import StaffManagementPage from './page/admin/StaffManagementPage.jsx'
 import TableManagementPage from './page/admin/table/TableManagementPage.jsx'
 import MenuDetailPage from './page/admin/menu/MenuDetailPage.jsx'
+import CustomerMenuPage from './page/customer/CustomerMenuPage.jsx'
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -27,6 +28,9 @@ const router = createBrowserRouter([
       { path: "tables", element: <TableManagementPage /> },
     ],
   },
+  {
+    path: "/customer/menu/:token", element: <CustomerMenuPage/>
+  }
 ]);
 
 createRoot(document.getElementById('root')).render(

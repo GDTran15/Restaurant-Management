@@ -92,10 +92,12 @@ export default function TableManagementPage() {
                 capacity={table.capacity}
                 restaurantTableStatus={table.restaurantTableStatus}
                 deleteTable={handleDeleteTable}
+                
                 />
             )
             )}
         </div>
+       
         </>
     );
 }
