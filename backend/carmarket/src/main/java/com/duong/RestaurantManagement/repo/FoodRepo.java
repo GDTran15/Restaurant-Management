@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FoodRepo extends JpaRepository<Food, Long> {
 
@@ -47,4 +49,21 @@ public interface FoodRepo extends JpaRepository<Food, Long> {
     )
 """)
     Page<GetFoodOfMenuDTO> getFoodsToAddInMenu(Pageable pageable,@Param("search") String search,@Param("menuId") Long menuId);
+
+    @Query("""
+    select new com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO(
+    f.foodId,
+        f.foodName,
+        f.isAvailable,
+        f.description,
+        f.quantity,
+        f.foodImageUrl,
+        f.price,
+        fcm.foodCategory.foodCategoryName
+        ) from Food f
+         join f.menuItems mi
+        left join f.foodCategoryMaps fcm
+        where mi.menu.menuId = :menuId
+""")
+    List<GetFoodListDTO> getFoodsByMenuId(@Param("menuId") Long menuId);
 }

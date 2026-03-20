@@ -57,6 +57,14 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(value = InvalidQrCodeException.class)
+    public ResponseEntity<ErrorApiResponse> qrCodeInvalid(InvalidQrCodeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorApiResponse(HttpStatus.NOT_FOUND.value(), e.getMessage())
+                );
+    }
+
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

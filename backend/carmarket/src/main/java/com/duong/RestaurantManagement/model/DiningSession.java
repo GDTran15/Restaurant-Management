@@ -4,6 +4,7 @@ package com.duong.RestaurantManagement.model;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Table(name = "dining_sessions")
+@Builder
 public class DiningSession {
 
     @Id
@@ -23,6 +25,7 @@ public class DiningSession {
     private Long diningSessionId;
 
     private LocalDateTime startAt;
+
 
     private LocalDateTime endAt;
 

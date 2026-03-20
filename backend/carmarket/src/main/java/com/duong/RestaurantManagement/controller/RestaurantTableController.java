@@ -35,6 +35,17 @@ public class RestaurantTableController {
         return ResponseEntity.ok("Table removed");
     }
 
+    @GetMapping("/{tableId}/qrCode")
+    public ResponseEntity<byte[]> getTablesQrCodeByRestaurantId(@PathVariable long tableId) {
+
+        byte[] qrCode = restaurantTableService.getTableQrCode(tableId);
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/png")
+                .body(qrCode);
+    }
+    }
 
 
-}
+
+

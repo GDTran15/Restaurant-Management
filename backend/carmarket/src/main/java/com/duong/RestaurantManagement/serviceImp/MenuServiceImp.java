@@ -1,17 +1,22 @@
 package com.duong.RestaurantManagement.serviceImp;
 
+import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
 import com.duong.RestaurantManagement.dto.menu.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
+import com.duong.RestaurantManagement.dto.menu.response.GetMenuActiveDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.exception.MenuModificationNotAllowedException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.Food;
+import com.duong.RestaurantManagement.model.FoodCategory;
 import com.duong.RestaurantManagement.model.Menu;
 import com.duong.RestaurantManagement.model.MenuItem;
+import com.duong.RestaurantManagement.repo.FoodCategoryRepo;
 import com.duong.RestaurantManagement.repo.FoodRepo;
 import com.duong.RestaurantManagement.repo.MenuItemRepo;
 import com.duong.RestaurantManagement.repo.MenuRepo;
@@ -33,6 +38,7 @@ public class MenuServiceImp implements MenuService {
     private final FoodRepo foodRepo;
     private final MenuItemRepo menuItemRepo;
     private final DiningSessionService diningSessionService;
+    private final FoodCategoryRepo foodCategoryRepo;
 
     @Override
     @Transactional
@@ -146,6 +152,23 @@ public class MenuServiceImp implements MenuService {
                 .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
         menu.setActivated(false);
         menuRepo.save(menu);
+    }
+
+    @Override
+    public GetMenuActiveDTO getMenuActiveWithItems() {
+        Menu menu = menuRepo.findByIsActivatedTrue().orElseThrow(
+                () -> new ResourceNotFoundException("We currently don't have active menu")
+        );
+
+        List<GetFoodListDTO> getFoodListInMenu = foodRepo.getFoodsByMenuId(menu.getMenuId());
+        List<GetFoodCategoryDTO> getFoodCategoryInMenu = foodCategoryRepo.findFoodCategoryAppearInMenu(menu.getMenuId());
+        return new GetMenuActiveDTO(
+                menu.getMenuName(),
+                getFoodCategoryInMenu,
+                getFoodListInMenu
+
+        );
+
     }
 
 

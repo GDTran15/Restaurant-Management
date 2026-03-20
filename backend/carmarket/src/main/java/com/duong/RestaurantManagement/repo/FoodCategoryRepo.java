@@ -1,9 +1,11 @@
 package com.duong.RestaurantManagement.repo;
 
 import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryAndFoodCountDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryDTO;
 import com.duong.RestaurantManagement.model.FoodCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +27,17 @@ public interface FoodCategoryRepo extends JpaRepository<FoodCategory, Long> {
 
 """)
     List<GetFoodCategoryAndFoodCountDTO> findAllWithFoodBelongsCount();
+
+
+    @Query("""
+    select distinct new com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryDTO(
+    fc.foodCategoryId,
+    fc.foodCategoryName
+    ) from FoodCategory fc
+    join fc.foodCategoryMaps fcm
+    join fcm.food f
+    join f.menuItems mi
+    where mi.menu.menuId = :menuId
+""")
+    List<GetFoodCategoryDTO> findFoodCategoryAppearInMenu(@Param("menuId") Long menuId);
 }

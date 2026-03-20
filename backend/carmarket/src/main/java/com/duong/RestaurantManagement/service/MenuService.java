@@ -4,6 +4,7 @@ import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
 import com.duong.RestaurantManagement.dto.menu.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
+import com.duong.RestaurantManagement.dto.menu.response.GetMenuActiveDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
 import org.jspecify.annotations.Nullable;
@@ -32,4 +33,6 @@ public interface MenuService {
     void activateMenu(Long menuId);
 
     void deactivateMenu(Long menuId);
+
+    GetMenuActiveDTO getMenuActiveWithItems();
 }

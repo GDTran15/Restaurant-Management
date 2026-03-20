@@ -24,6 +24,8 @@ public class RestaurantTable {
 
     private int capacity;
 
+    private String tableQrCodeValue;
+
 
     private boolean restaurantTableStatus;
 

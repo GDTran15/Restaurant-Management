@@ -4,6 +4,7 @@ import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.dto.menu.request.AddMenuRequestDTO;
 import com.duong.RestaurantManagement.dto.menu.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.dto.menu.response.GetListOfMenuDTO;
+import com.duong.RestaurantManagement.dto.menu.response.GetMenuActiveDTO;
 import com.duong.RestaurantManagement.dto.menu.response.GetMenuAsOption;
 import com.duong.RestaurantManagement.dto.menu.response.MenuDetailResponseDTO;
 import com.duong.RestaurantManagement.service.MenuService;
@@ -65,6 +66,11 @@ public class MenuController {
                                                                 @RequestParam(defaultValue = "") String search
     ) {
         return ResponseEntity.ok(menuService.getFoodOfMenu(menuId,page,size,search));
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<GetMenuActiveDTO> getMenuForCustomer() {
+        return ResponseEntity.ok(menuService.getMenuActiveWithItems());
     }
 
     @PatchMapping("/{menuId}/activate")

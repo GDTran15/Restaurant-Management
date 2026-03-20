@@ -1,7 +1,7 @@
 package com.duong.RestaurantManagement.controller;
 
-import com.duong.RestaurantManagement.dto.food.response.GetAllFoodCategoryDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryAndFoodCountDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryDTO;
 import com.duong.RestaurantManagement.service.FoodCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class FoodCategoryController {
 
 
     @GetMapping
-    public ResponseEntity<List<GetAllFoodCategoryDTO>> getFoodCategory() {
+    public ResponseEntity<List<GetFoodCategoryDTO>> getFoodCategory() {
         return ResponseEntity.ok( foodCategoryService.getAllCategory()) ;
     }
 

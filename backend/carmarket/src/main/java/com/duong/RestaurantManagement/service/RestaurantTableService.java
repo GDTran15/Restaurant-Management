@@ -12,4 +12,10 @@ public interface RestaurantTableService {
     List<GetTableDTO> getAllTables();
 
     void removeTable(long tableId);
+
+    byte[] getTableQrCode(long restaurantTableId);
+
+    void validateTableToken(String tableQrToken);
+
+
 }

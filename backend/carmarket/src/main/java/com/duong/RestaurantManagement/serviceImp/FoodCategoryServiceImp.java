@@ -1,7 +1,7 @@
 package com.duong.RestaurantManagement.serviceImp;
 
-import com.duong.RestaurantManagement.dto.food.response.GetAllFoodCategoryDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryAndFoodCountDTO;
+import com.duong.RestaurantManagement.dto.food.response.GetFoodCategoryDTO;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.exception.FoodCategoryNotEmptyException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
@@ -37,12 +37,12 @@ public class FoodCategoryServiceImp implements FoodCategoryService {
     }
 
     @Override
-    public List<GetAllFoodCategoryDTO>  getAllCategory() {
+    public List<GetFoodCategoryDTO>  getAllCategory() {
         return foodCategoryRepo.findAll()
                 .stream()
                 .map(
                         foodCategory -> {
-                            return new GetAllFoodCategoryDTO(
+                            return new GetFoodCategoryDTO(
                                     foodCategory.getFoodCategoryId(),
                                     foodCategory.getFoodCategoryName()
                             );
