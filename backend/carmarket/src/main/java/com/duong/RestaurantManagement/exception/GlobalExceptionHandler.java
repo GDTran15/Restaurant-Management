@@ -65,6 +65,14 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(value = DiningSessionNotActiveException.class)
+    public ResponseEntity<ErrorApiResponse> diningSessionIsNotActive(DiningSessionNotActiveException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(
+                        new ErrorApiResponse(HttpStatus.CONFLICT.value(), e.getMessage())
+                );
+    }
+
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
