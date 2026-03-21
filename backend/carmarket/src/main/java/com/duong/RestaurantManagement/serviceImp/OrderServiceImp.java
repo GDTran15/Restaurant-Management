@@ -1,12 +1,9 @@
 package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.order.request.AddOrderDTO;
-import com.duong.RestaurantManagement.dto.order.request.OrderItemDTO;
+import com.duong.RestaurantManagement.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.*;
-import com.duong.RestaurantManagement.repo.DiningSessionRepo;
-import com.duong.RestaurantManagement.repo.FoodRepo;
-import com.duong.RestaurantManagement.repo.OrderItemRepo;
 import com.duong.RestaurantManagement.repo.OrderRepo;
 import com.duong.RestaurantManagement.service.DiningSessionService;
 import com.duong.RestaurantManagement.service.OrderItemService;
@@ -22,10 +19,7 @@ import java.time.LocalDateTime;
 public class OrderServiceImp implements OrderService {
 
      private final OrderRepo orderRepo;
-     private final DiningSessionRepo diningSessionRepo;
-     private final OrderItemRepo orderItemRepo;
-    private final FoodRepo foodRepo;
-    private final DiningSessionService diningSessionService;
+     private final DiningSessionService diningSessionService;
     private final OrderItemService orderItemService;
 
     @Override
@@ -34,7 +28,7 @@ public class OrderServiceImp implements OrderService {
        DiningSession diningSession = diningSessionService.validateDiningSessionActiveStatus(addOrderDTO.diningSessionId());
         Order order = Order.builder()
                 .createdAt(LocalDateTime.now())
-                .orderStatus(OrderStatus.IN_PROGRESS)
+                .orderStatus(OrderStatus.PENDING)
                 .orderPrice(0)
                 .diningSession(diningSession)
                 .build();
@@ -47,5 +41,39 @@ public class OrderServiceImp implements OrderService {
         orderRepo.save(order);
 
 
+    }
+
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+        Order order = orderRepo.findById(orderId).
+                orElseThrow(
+                        () -> new ResourceNotFoundException("Order not found")
+                );
+        order.setOrderStatus(orderStatus);
+        orderRepo.save(order);
+
+    }
+
+    @Override
+    public void deleteOrder(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Order not found")
+                );
+        checkIfOrderIsAbleToCancel(order);
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        orderRepo.save(order);
+    }
+
+
+    private void checkIfOrderIsAbleToCancel(Order order) {
+
+        if (order.getOrderStatus() == OrderStatus.COMPLETED) {
+            throw new InvalidOrderStateException("Order is already completed");
+        } else if (order.getOrderStatus() == OrderStatus.IN_PROGRESS) {
+            throw new InvalidOrderStateException("Order is already in progress");
+        } else if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidOrderStateException("Order is already cancelled");
+        }
     }
 }

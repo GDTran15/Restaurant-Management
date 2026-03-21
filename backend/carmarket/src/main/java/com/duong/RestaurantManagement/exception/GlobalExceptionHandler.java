@@ -72,6 +72,13 @@ public class GlobalExceptionHandler {
                         new ErrorApiResponse(HttpStatus.CONFLICT.value(), e.getMessage())
                 );
     }
+    @ExceptionHandler(value = InvalidOrderStateException.class)
+    public ResponseEntity<ErrorApiResponse> invalidOrderState(InvalidOrderStateException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(
+                        new ErrorApiResponse(HttpStatus.CONFLICT.value(), e.getMessage())
+                );
+    }
 
 
 
