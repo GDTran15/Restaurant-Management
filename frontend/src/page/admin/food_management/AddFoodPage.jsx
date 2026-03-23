@@ -34,6 +34,7 @@ export default function AddFoodPage() {
             })
             console.log(response.data);
             setFoodName("");
+            setCategoryId("")
            
             setPrice("");
             setQuantity("");
