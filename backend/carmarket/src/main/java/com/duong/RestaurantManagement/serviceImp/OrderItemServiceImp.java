@@ -9,6 +9,7 @@ import com.duong.RestaurantManagement.repo.FoodRepo;
 import com.duong.RestaurantManagement.repo.OrderItemRepo;
 import com.duong.RestaurantManagement.service.OrderItemService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,16 @@ public class OrderItemServiceImp implements OrderItemService {
     private final OrderItemRepo orderItemRepo;
 
     @Override
+    @Transactional
     public double addListOfOrderItemAndGetTotalPrice(List<OrderItemDTO> orderItemDTOS, Order order) {
         double totalPrice = order.getOrderPrice();
         for (OrderItemDTO orderItemDTO : orderItemDTOS){
             Food food = foodRepo.findById(orderItemDTO.foodId())
                     .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
+            int decrease = foodRepo.decreaseFoodQuantity( food.getFoodId(), orderItemDTO.quantity());
+            if (decrease == 0) {
+                throw new RuntimeException("Not enough stock or food not found");
+            }
             OrderItem orderItem = OrderItem.builder()
                     .quantity(orderItemDTO.quantity())
                     .order(order)

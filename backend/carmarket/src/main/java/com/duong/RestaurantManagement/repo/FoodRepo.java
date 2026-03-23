@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -67,4 +68,12 @@ public interface FoodRepo extends JpaRepository<Food, Long> {
         order by fcm.foodCategory.foodCategoryName asc
 """)
     Page<GetFoodListDTO> getFoodsByMenuId(@Param("menuId") Long menuId, Pageable pageable);
+
+    @Modifying
+    @Query("""
+    update Food f
+    set f.quantity = f.quantity - :quantity
+    where f.foodId = :foodId and f.quantity >= :quantity
+""")
+    int decreaseFoodQuantity(@Param("foodId") Long foodId, @Param("quantity") Integer quantity);
 }
