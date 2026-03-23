@@ -12,7 +12,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class OrderServiceImp implements OrderService {
        DiningSession diningSession = diningSessionService.validateDiningSessionActiveStatus(addOrderDTO.diningSessionId());
         Order order = Order.builder()
                 .createdAt(LocalDateTime.now())
+                .orderNumber(generateOrderNumber())
                 .orderStatus(OrderStatus.PENDING)
                 .orderPrice(0)
                 .diningSession(diningSession)
@@ -75,5 +78,9 @@ public class OrderServiceImp implements OrderService {
         } else if (order.getOrderStatus() == OrderStatus.CANCELLED) {
             throw new InvalidOrderStateException("Order is already cancelled");
         }
+    }
+
+    private String generateOrderNumber() {
+        return STR."ORD-\{LocalDate.now().toString().replace("-", "")}-\{UUID.randomUUID().toString().substring(0, 6)}";
     }
 }

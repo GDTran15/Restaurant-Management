@@ -28,6 +28,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @Column(unique = true, nullable = false)
+    private String orderNumber;
+
 
     @ManyToOne
     @JoinColumn(name = "dining_session_id")
