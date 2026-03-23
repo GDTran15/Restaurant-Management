@@ -1,6 +1,8 @@
 package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.order.request.AddOrderDTO;
+import com.duong.RestaurantManagement.dto.order.response.GetCustomerOrderDTO;
+import com.duong.RestaurantManagement.dto.order.response.GetOrderItemDTO;
 import com.duong.RestaurantManagement.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.*;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -66,6 +69,30 @@ public class OrderServiceImp implements OrderService {
         checkIfOrderIsAbleToCancel(order);
         order.setOrderStatus(OrderStatus.CANCELLED);
         orderRepo.save(order);
+    }
+
+    @Override
+    public List<GetCustomerOrderDTO> getDiningSessionOrder(Long diningSessionId) {
+        List<Order> orders= orderRepo.findByDiningSession_DiningSessionId(diningSessionId);
+        return orders.stream()
+                .map((order -> {
+                    return  new GetCustomerOrderDTO(
+                            order.getOrderNumber(),
+                            order.getCreatedAt(),
+                            order.getOrderStatus(),
+                            order.getOrderItems()
+                                    .stream()
+                                    .map((orderItem ->
+                                            {
+                                                return new GetOrderItemDTO(
+                                                        orderItem.getFood().getFoodName(),
+                                                        orderItem.getQuantity(),
+                                                        orderItem.getTotalPrice()
+                                                );
+                                            })
+                                    ).toList()
+                    );
+                })).toList();
     }
 
 

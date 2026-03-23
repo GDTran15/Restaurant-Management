@@ -1,11 +1,14 @@
 package com.duong.RestaurantManagement.controller;
 
 import com.duong.RestaurantManagement.dto.order.request.AddOrderDTO;
+import com.duong.RestaurantManagement.dto.order.response.GetCustomerOrderDTO;
 import com.duong.RestaurantManagement.model.OrderStatus;
 import com.duong.RestaurantManagement.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("orders")
@@ -34,6 +37,10 @@ public class OrderController {
 
     }
 
+    @GetMapping("")
+    public ResponseEntity<List<GetCustomerOrderDTO>> getOrders(@RequestParam Long diningSessionId) {
+        return ResponseEntity.ok(orderService.getDiningSessionOrder(diningSessionId));
+    }
 
 
 }
