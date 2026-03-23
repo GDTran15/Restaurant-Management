@@ -13,6 +13,7 @@ import StaffManagementPage from './page/admin/StaffManagementPage.jsx'
 import TableManagementPage from './page/admin/table/TableManagementPage.jsx'
 import MenuDetailPage from './page/admin/menu/MenuDetailPage.jsx'
 import CustomerMenuPage from './page/customer/CustomerMenuPage.jsx'
+import CustomerOrderPage from './page/customer/CustomerOrderPage.jsx'
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/customer/menu/:token", element: <CustomerMenuPage/>
+    
+  }, {
+    path: "/customer/order/:token", element: <CustomerOrderPage/>
+    
   }
 ]);
 

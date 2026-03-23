@@ -6,10 +6,11 @@ import CustomerMenuNavbar from "../../component/CustomerMenuNavBar";
 import MenuSection from "../../component/MenuSection";
 import CartSidebar from "../../component/CartSidebar";
 import axios from "axios";
-import { data, useParams } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
 
 
 export default function CustomerMenuPage() {
+  const navigate = useNavigate();
   const [cartList, setCartList] = useState([]); // backend
   const [cartListToShow, setCartListToShow] = useState([]); 
   const [menuName, setMenuName] = useState("");
@@ -183,7 +184,7 @@ useEffect(() => {
 
   return (
     <>
-      <CustomerMenuNavbar />
+      <CustomerMenuNavbar page={"menu"} token={token}/>
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <h1 className="text-2xl font-bold mb-6">
