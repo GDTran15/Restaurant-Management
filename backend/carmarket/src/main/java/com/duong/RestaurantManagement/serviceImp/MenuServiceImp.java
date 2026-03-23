@@ -26,6 +26,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -155,12 +156,14 @@ public class MenuServiceImp implements MenuService {
     }
 
     @Override
-    public GetMenuActiveDTO getMenuActiveWithItems() {
+    public GetMenuActiveDTO getMenuActiveWithItems(int page,int size) {
         Menu menu = menuRepo.findByIsActivatedTrue().orElseThrow(
                 () -> new ResourceNotFoundException("We currently don't have active menu")
         );
 
-        List<GetFoodListDTO> getFoodListInMenu = foodRepo.getFoodsByMenuId(menu.getMenuId());
+        PageRequest pageable = PageRequest.of(page, size);
+
+        Page<GetFoodListDTO> getFoodListInMenu = foodRepo.getFoodsByMenuId(menu.getMenuId(),pageable);
         List<GetFoodCategoryDTO> getFoodCategoryInMenu = foodCategoryRepo.findFoodCategoryAppearInMenu(menu.getMenuId());
         return new GetMenuActiveDTO(
                 menu.getMenuName(),

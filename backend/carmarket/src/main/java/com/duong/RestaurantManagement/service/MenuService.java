@@ -34,5 +34,6 @@ public interface MenuService {
 
     void deactivateMenu(Long menuId);
 
-    GetMenuActiveDTO getMenuActiveWithItems();
+    GetMenuActiveDTO getMenuActiveWithItems(int page, int size);
+
 }

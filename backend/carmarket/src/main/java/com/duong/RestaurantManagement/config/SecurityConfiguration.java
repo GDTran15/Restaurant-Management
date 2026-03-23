@@ -45,6 +45,8 @@ public class SecurityConfiguration {
                     })
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers("/register",
+                                        "/orders",
+                                        "/dining-sessions/**",
                                         "/menus/**",
                                         "/login","/menu-items/**",
                                         "/food-categories/**",

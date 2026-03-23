@@ -2,9 +2,11 @@ package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.dining_session.response.GetDiningSessionDTO;
 import com.duong.RestaurantManagement.exception.DiningSessionNotActiveException;
+import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.DiningSession;
 import com.duong.RestaurantManagement.model.DiningStatus;
 import com.duong.RestaurantManagement.repo.DiningSessionRepo;
+import com.duong.RestaurantManagement.repo.RestaurantTableRepo;
 import com.duong.RestaurantManagement.service.DiningSessionService;
 import com.duong.RestaurantManagement.service.RestaurantTableService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class DiningSessionServiceImp implements DiningSessionService {
 
     private final DiningSessionRepo diningSessionRepo;
     private final RestaurantTableService restaurantTableService;
+    private final RestaurantTableRepo restaurantTableRepo;
 
     @Override
     public boolean checkIfAnyDinningSessionActive() {
@@ -38,6 +41,10 @@ public class DiningSessionServiceImp implements DiningSessionService {
                     .builder()
                     .startAt(LocalDateTime.now())
                     .diningStatus(DiningStatus.ACTIVE)
+                    .restaurantTable(restaurantTableRepo.findByTableQrCodeValue(tableQrToken)
+                            .orElseThrow(
+                                    () -> new ResourceNotFoundException("Restaurant table not found")
+                            ))
                     .build();
             diningSessionRepo.save(diningSession);
             return new GetDiningSessionDTO(diningSession.getDiningSessionId());

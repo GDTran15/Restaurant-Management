@@ -38,6 +38,7 @@ public interface FoodCategoryRepo extends JpaRepository<FoodCategory, Long> {
     join fcm.food f
     join f.menuItems mi
     where mi.menu.menuId = :menuId
+    order by fc.foodCategoryName
 """)
     List<GetFoodCategoryDTO> findFoodCategoryAppearInMenu(@Param("menuId") Long menuId);
 }

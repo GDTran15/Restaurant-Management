@@ -69,8 +69,12 @@ public class MenuController {
     }
 
     @GetMapping("/active")
-    public ResponseEntity<GetMenuActiveDTO> getMenuForCustomer() {
-        return ResponseEntity.ok(menuService.getMenuActiveWithItems());
+    public ResponseEntity<GetMenuActiveDTO> getMenuForCustomer(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size
+
+    ) {
+        return ResponseEntity.ok(menuService.getMenuActiveWithItems(page,size));
     }
 
     @PatchMapping("/{menuId}/activate")

@@ -9,7 +9,9 @@ import com.duong.RestaurantManagement.exception.FoodAvailabilityException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.Food;
 import com.duong.RestaurantManagement.repo.FoodRepo;
+import com.duong.RestaurantManagement.repo.MenuItemRepo;
 import com.duong.RestaurantManagement.service.FoodService;
+import com.duong.RestaurantManagement.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,8 @@ public class FoodServiceImpl implements FoodService {
 
     private final FoodRepo foodRepo;
     private final FoodCategoryMapService foodCategoryMapService;
+    private final MenuService menuService;
+    private final MenuItemRepo menuItemRepo;
 
     @Override
     @Transactional
@@ -84,6 +88,8 @@ public class FoodServiceImpl implements FoodService {
     @Override
     @Transactional
     public void removeFood(Long foodId) {
+        menuItemRepo.deleteByFood_FoodId(foodId);
+
         foodCategoryMapService.deleteMap(foodId);
         foodRepo.deleteById(foodId);
     }

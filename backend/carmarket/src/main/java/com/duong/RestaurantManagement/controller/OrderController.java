@@ -15,7 +15,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    ResponseEntity<Void> addOrders(AddOrderDTO addOrderDTO) {
+    ResponseEntity<Void> addOrders(@RequestBody AddOrderDTO addOrderDTO) {
         orderService.addOrder(addOrderDTO);
         return ResponseEntity.noContent().build();
     }
