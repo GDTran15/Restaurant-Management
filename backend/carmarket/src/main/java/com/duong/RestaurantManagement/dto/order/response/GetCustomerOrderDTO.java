@@ -10,6 +10,7 @@ public record GetCustomerOrderDTO(
         String orderNumber,
         LocalDateTime orderTime,
         OrderStatus orderStatus,
+        double orderTotalPrice,
         List<GetOrderItemDTO> orderItemDTOS
 
 ) {

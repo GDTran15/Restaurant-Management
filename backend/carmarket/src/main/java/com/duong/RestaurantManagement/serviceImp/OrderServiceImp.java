@@ -80,6 +80,7 @@ public class OrderServiceImp implements OrderService {
                             order.getOrderNumber(),
                             order.getCreatedAt(),
                             order.getOrderStatus(),
+                            order.getOrderPrice(),
                             order.getOrderItems()
                                     .stream()
                                     .map((orderItem ->
