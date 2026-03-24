@@ -11,9 +11,11 @@ import java.util.List;
 public interface OrderService {
     void addOrder(AddOrderDTO addOrderDTO);
 
-    void updateOrderStatus(Long orderId, OrderStatus orderStatus);
+    void completeOrder(Long orderId);
 
-    void deleteOrder(Long orderId);
+    void cancelOrder(Long orderId);
 
      List<GetCustomerOrderDTO> getDiningSessionOrder(Long diningSessionId);
+
+    void orderStartToProcess(Long orderId);
 }

@@ -25,14 +25,20 @@ public class OrderController {
 
     @PatchMapping("/{orderId}/status")
     ResponseEntity<Void> UpdateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
-        orderService.updateOrderStatus(orderId,orderStatus);
+        orderService.completeOrder(orderId);
         return ResponseEntity.noContent().build();
 
     }
 
+    @PatchMapping("/{orderId}/processing")
+    ResponseEntity<Void> UpdateOrderProcessing(@PathVariable Long orderId,@RequestParam OrderStatus orderStatus) {
+        orderService.orderStartToProcess(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{orderId}/canceled")
-    ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
-        orderService.deleteOrder(orderId);
+    ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        orderService.cancelOrder(orderId);
         return ResponseEntity.noContent().build();
 
     }

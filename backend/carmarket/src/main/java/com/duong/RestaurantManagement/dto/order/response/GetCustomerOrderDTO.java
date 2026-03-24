@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record GetCustomerOrderDTO(
+        Long orderId,
         String orderNumber,
         LocalDateTime orderTime,
         OrderStatus orderStatus,

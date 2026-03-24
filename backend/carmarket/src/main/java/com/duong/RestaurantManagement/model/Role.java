@@ -40,10 +40,7 @@ public enum Role {
     private final Set<Permission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
-//        var authorities = getPermissions()
-//                .stream()
-//                .map(permission -> new SimpleGrantedAuthority(permission.name()))
-//                .toList();
+
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         getPermissions().forEach(permission ->

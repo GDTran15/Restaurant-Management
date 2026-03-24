@@ -6,6 +6,7 @@ import com.duong.RestaurantManagement.dto.order.response.GetOrderItemDTO;
 import com.duong.RestaurantManagement.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.*;
+import com.duong.RestaurantManagement.repo.FoodRepo;
 import com.duong.RestaurantManagement.repo.OrderRepo;
 import com.duong.RestaurantManagement.service.DiningSessionService;
 import com.duong.RestaurantManagement.service.OrderItemService;
@@ -26,6 +27,7 @@ public class OrderServiceImp implements OrderService {
      private final OrderRepo orderRepo;
      private final DiningSessionService diningSessionService;
     private final OrderItemService orderItemService;
+    private final FoodRepo foodRepo;
 
     @Override
     @Transactional
@@ -50,25 +52,49 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+    public void completeOrder(Long orderId) {
         Order order = orderRepo.findById(orderId).
                 orElseThrow(
                         () -> new ResourceNotFoundException("Order not found")
                 );
-        order.setOrderStatus(orderStatus);
+        checkIfOrderIsAbleToUpdate(order,OrderStatus.COMPLETED);
+        order.setOrderStatus(OrderStatus.COMPLETED);
         orderRepo.save(order);
 
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
+    public void orderStartToProcess(Long orderId){
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Order not found")
                 );
-        checkIfOrderIsAbleToCancel(order);
-        order.setOrderStatus(OrderStatus.CANCELLED);
+        checkIfOrderIsAbleToUpdate(order,OrderStatus.IN_PROGRESS);
+        order.setOrderStatus(OrderStatus.IN_PROGRESS);
         orderRepo.save(order);
+    }
+
+
+
+
+    @Override
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Order not found")
+                );
+        checkIfOrderIsAbleToUpdate(order,OrderStatus.CANCELLED);
+
+        order.setOrderStatus(OrderStatus.CANCELLED);
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            int update = foodRepo.updateFoodQuantityAfterOrderCancel(orderItem.getFood().getFoodId(),orderItem.getQuantity());
+            if (update == 0) {
+                throw new ResourceNotFoundException("Food not found with id: " );
+            }
+        }
+
+
     }
 
     @Override
@@ -77,6 +103,7 @@ public class OrderServiceImp implements OrderService {
         return orders.stream()
                 .map((order -> {
                     return  new GetCustomerOrderDTO(
+                            order.getOrderId(),
                             order.getOrderNumber(),
                             order.getCreatedAt(),
                             order.getOrderStatus(),
@@ -97,15 +124,14 @@ public class OrderServiceImp implements OrderService {
     }
 
 
-    private void checkIfOrderIsAbleToCancel(Order order) {
+    private void checkIfOrderIsAbleToUpdate(Order order,OrderStatus updateStatus) {
+        if (order.getOrderStatus() == OrderStatus.PENDING && (updateStatus == OrderStatus.IN_PROGRESS || updateStatus == OrderStatus.CANCELLED))  return;
 
-        if (order.getOrderStatus() == OrderStatus.COMPLETED) {
-            throw new InvalidOrderStateException("Order is already completed");
-        } else if (order.getOrderStatus() == OrderStatus.IN_PROGRESS) {
-            throw new InvalidOrderStateException("Order is already in progress");
-        } else if (order.getOrderStatus() == OrderStatus.CANCELLED) {
-            throw new InvalidOrderStateException("Order is already cancelled");
-        }
+        if  (order.getOrderStatus() == OrderStatus.IN_PROGRESS &&  updateStatus == OrderStatus.COMPLETED) return;
+
+        String message = STR."Cannot change from\{order.getOrderStatus()} to \{updateStatus}";
+
+        throw new InvalidOrderStateException(message);
     }
 
     private String generateOrderNumber() {

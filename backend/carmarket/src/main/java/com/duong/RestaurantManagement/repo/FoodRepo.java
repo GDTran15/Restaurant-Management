@@ -76,4 +76,12 @@ public interface FoodRepo extends JpaRepository<Food, Long> {
     where f.foodId = :foodId and f.quantity >= :quantity
 """)
     int decreaseFoodQuantity(@Param("foodId") Long foodId, @Param("quantity") Integer quantity);
+
+    @Modifying
+    @Query("""
+    update Food f
+    set f.quantity = f.quantity + :quantity
+    where f.foodId = :foodId
+""")
+    int updateFoodQuantityAfterOrderCancel(@Param("foodId") Long foodId, @Param("quantity") Integer quantity);
 }
