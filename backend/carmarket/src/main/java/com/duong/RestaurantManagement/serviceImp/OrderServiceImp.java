@@ -129,7 +129,7 @@ public class OrderServiceImp implements OrderService {
 
         if  (order.getOrderStatus() == OrderStatus.IN_PROGRESS &&  updateStatus == OrderStatus.COMPLETED) return;
 
-        String message = STR."Cannot change from\{order.getOrderStatus()} to \{updateStatus}";
+        String message = STR."Cannot change from \{order.getOrderStatus()} to \{updateStatus}";
 
         throw new InvalidOrderStateException(message);
     }

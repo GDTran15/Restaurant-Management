@@ -11,4 +11,6 @@ public interface DiningSessionService {
     GetDiningSessionDTO getDiningSession(String tableQrToken);
 
     DiningSession validateDiningSessionActiveStatus(Long aLong);
+
+    void deactiveDinningSession(Long diningSessionId);
 }

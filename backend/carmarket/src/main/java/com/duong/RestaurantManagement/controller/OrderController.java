@@ -23,15 +23,15 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{orderId}/status")
-    ResponseEntity<Void> UpdateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
+    @PatchMapping("/{orderId}/complete")
+    ResponseEntity<Void> UpdateOrderStatus(@PathVariable Long orderId) {
         orderService.completeOrder(orderId);
         return ResponseEntity.noContent().build();
 
     }
 
     @PatchMapping("/{orderId}/processing")
-    ResponseEntity<Void> UpdateOrderProcessing(@PathVariable Long orderId,@RequestParam OrderStatus orderStatus) {
+    ResponseEntity<Void> UpdateOrderProcessing(@PathVariable Long orderId) {
         orderService.orderStartToProcess(orderId);
         return ResponseEntity.noContent().build();
     }

@@ -60,4 +60,11 @@ public class DiningSessionServiceImp implements DiningSessionService {
 
     }
 
+    @Override
+    public void deactiveDinningSession(Long diningSessionId) {
+       DiningSession diningSession =  diningSessionRepo.findById(diningSessionId).get();
+       diningSession.setDiningStatus(DiningStatus.COMPLETED);
+       diningSessionRepo.save(diningSession);
+    }
+
 }
