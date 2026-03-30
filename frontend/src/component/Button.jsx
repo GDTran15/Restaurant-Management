@@ -14,7 +14,14 @@ export default function Button({children,type = "button",variant,width , classNa
         <button
         disabled={disabled}
             type={type}
-            className={`${variants[variant]} flex items-center justify-center px-4 py-1 rounded-xl hover:opacity-90  ${width} ${className}`}
+            className={`
+                ${variants[variant]} 
+                flex items-center justify-center px-4 py-1 rounded-xl
+                ${disabled 
+                    ? "opacity-50 cursor-not-allowed pointer-events-none" 
+                    : "hover:opacity-90 cursor-pointer"}
+                ${width} ${className}
+            `}
             onClick={onClick}
         >
             {children}

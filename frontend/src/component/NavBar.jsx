@@ -3,6 +3,7 @@ import { FaHome, FaUser } from "react-icons/fa";
 import { MdOutlineRestaurant, MdTableRestaurant } from "react-icons/md";
 import { IoFastFoodSharp } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
+import { TbPackage } from "react-icons/tb";
 
 export default function NavBar({ username }) {
   return (
@@ -12,12 +13,13 @@ export default function NavBar({ username }) {
         <h3>Manager Page</h3>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         <SideBarIcon to="/admin" icon={<FaHome size={28} />} text="Dashboard" />
         <SideBarIcon to="/admin/staffs" icon={<FaUser size={28} />} text="Staff" />
         <SideBarIcon to="/admin/tables" icon={<MdTableRestaurant size={28} />} text="Table" />
         <SideBarIcon to="/admin/menus" icon={<MdOutlineRestaurant size={28} />} text="Menu" />
         <SideBarIcon to="/admin/foods" icon={<IoFastFoodSharp size={28} />} text="Food" />
+        <SideBarIcon to="/admin/orders" icon={<TbPackage size={28}/>} text="Order"/>
       </div>
 
       <div>

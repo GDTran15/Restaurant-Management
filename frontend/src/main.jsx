@@ -14,6 +14,7 @@ import TableManagementPage from './page/admin/table/TableManagementPage.jsx'
 import MenuDetailPage from './page/admin/menu/MenuDetailPage.jsx'
 import CustomerMenuPage from './page/customer/CustomerMenuPage.jsx'
 import CustomerOrderPage from './page/customer/CustomerOrderPage.jsx'
+import OrderManagementPage from './page/admin/order/OrderManagementPage.jsx'
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: "menus/:menuId", element: <MenuDetailPage /> },
       { path: "staffs", element: <StaffManagementPage /> },
       { path: "tables", element: <TableManagementPage /> },
+      { path: "orders", element: <OrderManagementPage/>}
     ],
   },
   {
