@@ -2,9 +2,12 @@ package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.order.request.AddOrderDTO;
 import com.duong.RestaurantManagement.dto.order.response.GetCustomerOrderDTO;
+import com.duong.RestaurantManagement.dto.order.response.GetOrderForAdminDTO;
 import com.duong.RestaurantManagement.dto.order.response.GetOrderItemDTO;
+import com.duong.RestaurantManagement.dto.order.response.GetOrderNumberForEachStatus;
 import com.duong.RestaurantManagement.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
+import com.duong.RestaurantManagement.mapper.OrderMapper;
 import com.duong.RestaurantManagement.model.*;
 import com.duong.RestaurantManagement.repo.FoodRepo;
 import com.duong.RestaurantManagement.repo.OrderRepo;
@@ -17,8 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -74,10 +76,7 @@ public class OrderServiceImp implements OrderService {
         orderRepo.save(order);
     }
 
-
-
-
-    @Override
+ @Override
     public void cancelOrder(Long orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(
@@ -97,30 +96,48 @@ public class OrderServiceImp implements OrderService {
 
     }
 
+
     @Override
     public List<GetCustomerOrderDTO> getDiningSessionOrder(Long diningSessionId) {
         List<Order> orders= orderRepo.findByDiningSession_DiningSessionId(diningSessionId);
         return orders.stream()
-                .map((order -> {
-                    return  new GetCustomerOrderDTO(
-                            order.getOrderId(),
-                            order.getOrderNumber(),
-                            order.getCreatedAt(),
-                            order.getOrderStatus(),
-                            order.getOrderPrice(),
-                            order.getOrderItems()
-                                    .stream()
-                                    .map((orderItem ->
-                                            {
-                                                return new GetOrderItemDTO(
-                                                        orderItem.getFood().getFoodName(),
-                                                        orderItem.getQuantity(),
-                                                        orderItem.getTotalPrice()
-                                                );
-                                            })
-                                    ).toList()
-                    );
-                })).toList();
+                .map(OrderMapper::toCustomerDTO).toList();
+    }
+
+    @Override
+    public List<GetOrderForAdminDTO> getActiveDiningSessionOrder() {
+        List<Order> orders = orderRepo.findByActiveDiningSession(DiningStatus.ACTIVE);
+
+        return orders.stream()
+                .map(OrderMapper::orderToGetOrderForAdminDTO) .toList();
+    }
+
+    @Override
+    public List<GetOrderForAdminDTO> getOrderByStatus(OrderStatus orderStatus) {
+        List<Order> orders = orderRepo.findByActiveDiningSessionAndOrderStatus(DiningStatus.ACTIVE,orderStatus);
+
+        return orders.stream()
+                .map(OrderMapper::orderToGetOrderForAdminDTO) .toList();
+    }
+
+    @Override
+    public List<GetOrderNumberForEachStatus> getNumberOfOrderForEachStatus() {
+        Map<OrderStatus,Long> map = new EnumMap<>(OrderStatus.class);
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            map.put(orderStatus, 0L);
+        }
+        List<GetOrderNumberForEachStatus> firstVersion = orderRepo.getOrderCountByOrderStatus();
+
+        for (GetOrderNumberForEachStatus getOrderNumberForEachStatus : firstVersion) {
+            map.put(getOrderNumberForEachStatus.orderStatus(), getOrderNumberForEachStatus.count());
+        }
+        List<GetOrderNumberForEachStatus> result = new ArrayList<>();
+
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            result.add(new GetOrderNumberForEachStatus(orderStatus, map.get(orderStatus)));
+        }
+
+        return result;
     }
 
 

@@ -18,7 +18,7 @@ import java.util.List;
 public class RestaurantTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int restaurantTableId;
+    private long restaurantTableId;
 
     private int restaurantTableNumber;
 
