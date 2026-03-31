@@ -18,7 +18,7 @@ export default function TableCard({restaurantTableId,restaurantTableNumber,resta
         </div>
        {showQrCode ? <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 ">
             <IoMdClose onClick={() => setShowQrCode(false)} size={30} className="absolute top-28 right-130 text-white cursor-pointer"/>
-             <img  src={`http://localhost:8080/tables/${7}/qrCode`}
+             <img  src={`http://localhost:8080/tables/${restaurantTableId}/qrCode`}
   alt="QR Code" />
         </div> : ""}
         

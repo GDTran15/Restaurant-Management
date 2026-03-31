@@ -18,6 +18,14 @@ export default function AdminOrderCard({orderStatus,orderList}){
             console.log(error);
         }
     }
+    const handleCancelled = async (orderId) => {
+        try {
+            const response = await axios.patch(`http://localhost:8080/orders/${orderId}/cancelled`);
+            console.log(response)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
 
@@ -27,7 +35,14 @@ export default function AdminOrderCard({orderStatus,orderList}){
                         <div className="bg-white p-4 rounded-xl relative">
 
                         {orderStatus === "pending" ?
-                          <Button className={"food-edit-button absolute right-5"} onClick={() => handleStartProgress(order.orderId)}>Start cooking</Button>
+                        <>
+                        <div className="flex absolute right-5 gap-2">
+                             <Button variant={"danger"} className={""} onClick={() => handleCancelled(order.orderId)}>Cancel</Button>
+                          <Button className={"food-edit-button "} onClick={() => handleStartProgress(order.orderId)}>Start cooking</Button>
+                        </div>
+                           
+
+                        </>
 
                         : ""}
                         {orderStatus === "in-progress" ?
@@ -35,7 +50,11 @@ export default function AdminOrderCard({orderStatus,orderList}){
 
                         : ""}
                         {orderStatus === "complete" ?
-                          <Button className={" absolute right-5 "} disabled={"true"}>Completed</Button>
+                          <Button className={" absolute right-5 food-edit-button"} disabled={"true"}>Completed</Button>
+
+                        : ""}
+                        {orderStatus === "cancelled" ?
+                          <Button className={" absolute right-5 "} variant={"danger"} disabled={"true"}>Cancelled</Button>
 
                         : ""}
 

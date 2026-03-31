@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PendingOrder from "./PendingOrder";
 import InProgressOrder from "./InProgressOrder";
 import CompleteOrder from "./CompleteOrder";
+import CancelledOrder from "./CancelledOrder";
 
 export default function OrderManagementPage(){
    
@@ -20,6 +21,9 @@ export default function OrderManagementPage(){
             break;
         case "complete": 
             mainContent = <CompleteOrder/>;
+            break;
+        case "cancelled": 
+            mainContent = <CancelledOrder/>;
             break;
 
     }
@@ -83,7 +87,8 @@ export default function OrderManagementPage(){
                     <nav className="bg-dark-cream mt-7  font-bold inline-flex space-x-1 p-1  rounded-2xl">
                         <ul onClick={() => setCurrentPage("pending")} className={`horizontal-nav-bar ${currentPage === "pending" ? "horizontal-nav-bar-active" : ""}`}>Pending</ul>
                         <ul onClick={() => setCurrentPage("inprogress")}  className={`horizontal-nav-bar ${currentPage === "inprogress" ? "horizontal-nav-bar-active" : ""}`}>InProgress</ul>
-                        <ul onClick={() => setCurrentPage("complete")}  className={`horizontal-nav-bar ${currentPage === "complete" ? "horizontal-nav-bar-active" : ""}`}>Complete</ul>
+                        <ul onClick={() => setCurrentPage("complete")}  className={`horizontal-nav-bar ${currentPage === "complete" ? "horizontal-nav-bar-active" : ""}`}>Completed</ul>
+                        <ul onClick={() => setCurrentPage("cancelled")}  className={`horizontal-nav-bar ${currentPage === "cancelled" ? "horizontal-nav-bar-active" : ""}`}>Cancelled</ul>
                     </nav>
                     <div>
                         {mainContent}
