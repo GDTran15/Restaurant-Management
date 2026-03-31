@@ -18,11 +18,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = DuplicateResourceException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorApiResponse> resourceAlreadyExist(DuplicateResourceException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(
-                        new ErrorApiResponse(HttpStatus.CONFLICT.value(), e.getMessage())
-                );
+    public ResponseEntity<Map<String,String>> resourceAlreadyExist(DuplicateResourceException e) {
+        return new ResponseEntity<>(e.getErrors(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = FoodAvailabilityException.class)
