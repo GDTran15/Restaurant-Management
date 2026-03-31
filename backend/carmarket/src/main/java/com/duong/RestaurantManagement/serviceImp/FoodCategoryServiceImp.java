@@ -13,7 +13,9 @@ import com.duong.RestaurantManagement.service.FoodCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,9 @@ public class FoodCategoryServiceImp implements FoodCategoryService {
     public void createNewFoodCategory(String foodCategoryName) {
         boolean categoryExist = foodCategoryRepo.existsByFoodCategoryName(foodCategoryName);
         if (categoryExist) {
-            throw new DuplicateResourceException("Food category already exist");
+            throw new DuplicateResourceException(Map.of(
+                    "foodCategory", "Food category already exist"
+            ));
         }
         FoodCategory foodCategory = FoodCategory.builder()
                 .foodCategoryName(foodCategoryName).build();

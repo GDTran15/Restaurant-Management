@@ -24,7 +24,7 @@ public enum Role {
                     MANAGER_DELETE,
                     MANAGER_CREATE
 
-            )
+            ),"Admin"
     ),
     MANAGER(
             Set.of(
@@ -33,11 +33,14 @@ public enum Role {
                     MANAGER_DELETE,
                     MANAGER_CREATE
 
-            )
+            ),"Manager"
     );
 
     @Getter
     private final Set<Permission> permissions;
+
+    @Getter
+    private final String label;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
 

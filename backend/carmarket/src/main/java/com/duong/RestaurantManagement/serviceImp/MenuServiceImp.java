@@ -30,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,9 @@ public class MenuServiceImp implements MenuService {
         boolean menuExist = menuRepo.existsByMenuName(addMenuRequestDTO.menuName());
 
         if (menuExist) {
-            throw new DuplicateResourceException("Menu name already existed");
+            throw new DuplicateResourceException(
+                    Map.of("menu","Menu name already existed")
+            );
         }
 
         Menu menu = Menu.builder()

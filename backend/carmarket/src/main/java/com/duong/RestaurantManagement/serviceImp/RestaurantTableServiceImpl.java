@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -28,7 +29,9 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     public void createANewTable(AddTableDTO addTableDTO) {
 
         if (restaurantTableRepo.existsByRestaurantTableNumber(addTableDTO.tableNumber())) {
-            throw new DuplicateResourceException("Table number already exists");
+            throw new DuplicateResourceException(
+                    Map.of("tableNumber","Table number already exists")
+            );
         }
 
 

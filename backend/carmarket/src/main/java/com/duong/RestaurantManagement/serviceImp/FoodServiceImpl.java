@@ -18,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class FoodServiceImpl implements FoodService {
@@ -31,7 +33,10 @@ public class FoodServiceImpl implements FoodService {
     @Transactional
     public void createNewFood(AddFoodRequestDTO addFoodRequestDTO) {
         if (foodRepo.existsByFoodName(addFoodRequestDTO.foodName())) {
-            throw new DuplicateResourceException("This food already existed");
+            throw new DuplicateResourceException(Map.of(
+                    "food","This food already existed"
+            ));
+
         }
 
         Food newFood = Food.builder()

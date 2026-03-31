@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class UserServiceImp implements UserService {
 
     private final UserRepo userRepo;
     private final AuthenticationManager authenticationManager;
-    private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     private final JwtService jwtService;
 
     @Transactional
@@ -37,14 +39,19 @@ public class UserServiceImp implements UserService {
         boolean usernameExist = userRepo.existsByUsername(userRegisterRequestDTO.username());
         boolean emailExist = userRepo.existsByEmail(userRegisterRequestDTO.email());
         boolean phoneExist = userRepo.existsByPhone(userRegisterRequestDTO.phone());
+        Map<String,String> map = new HashMap<>();
     if (usernameExist) {
-        throw new DuplicateResourceException("Username already exists");
-    }else if (emailExist) {
-        throw new DuplicateResourceException("Email already exists");
-    }else if (phoneExist) {
-        throw new DuplicateResourceException("Phone already exists");
+        map.put("username","Username already exists");
     }
-
+    if (emailExist) {
+        map.put("email","Email already exists");
+    }
+    if (phoneExist) {
+        map.put("phone","Phone already exists");
+    }
+    if (!map.isEmpty()){
+        throw new DuplicateResourceException(map);
+    }
     User user = User.builder()
             .username(userRegisterRequestDTO.username())
             .password(bCryptPasswordEncoder.encode(userRegisterRequestDTO.password()))
