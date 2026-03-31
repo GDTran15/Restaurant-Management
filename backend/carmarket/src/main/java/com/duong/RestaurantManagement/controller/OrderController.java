@@ -38,7 +38,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{orderId}/canceled")
+    @PatchMapping("/{orderId}/cancelled")
     ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
         orderService.cancelOrder(orderId);
         return ResponseEntity.noContent().build();
@@ -67,6 +67,10 @@ public class OrderController {
     @GetMapping("/completed")
     public ResponseEntity<List<GetOrderForAdminDTO>> getCompletedOrder() {
         return ResponseEntity.ok(orderService.getOrderByStatus(OrderStatus.COMPLETED));
+    }
+    @GetMapping("/cancelled")
+    public ResponseEntity<List<GetOrderForAdminDTO>> getCancelledOrder() {
+        return ResponseEntity.ok(orderService.getOrderByStatus(OrderStatus.CANCELLED));
     }
 
     @GetMapping("/count/session")

@@ -77,6 +77,7 @@ public class OrderServiceImp implements OrderService {
     }
 
  @Override
+ @Transactional
     public void cancelOrder(Long orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(
