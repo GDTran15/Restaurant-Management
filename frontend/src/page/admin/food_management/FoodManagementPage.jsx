@@ -1,8 +1,8 @@
 
 import { useState } from "react";
-import AddFoodPage from "./food_management/AddFoodPage";
-import ViewFoodPage from "./food_management/ViewFoodPage";
-import FoodCategoryPage from "./food_management/FoodCategoryPage";
+import AddFoodPage from "./AddFoodPage";
+import ViewFoodPage from "./ViewFoodPage";
+import FoodCategoryPage from "./FoodCategoryPage";
 
 export default function FoodManagementPage() {
     const [currentPage,setCurrentPage] = useState("add");

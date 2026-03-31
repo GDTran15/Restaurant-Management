@@ -9,8 +9,8 @@ export default function InputField({ label, placeholder, inputType, value, setVa
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-      <label className="block text-base font-semibold mb-2">{label}</label>
+      <div className="flex justify-between items-center mb-1">
+      <label className="block text-base font-semibold ">{label}</label>
       {
         error ? <i className="text-red-500">*{error}</i> : ""
       }
@@ -22,7 +22,7 @@ export default function InputField({ label, placeholder, inputType, value, setVa
         value={value}
         placeholder={placeholder}
         step={step}           // allows decimals
-        className="border p-1.5 rounded w-full bg-input-bg focus:outline-none focus:ring-0 focus:border-grey-600 mb-2"
+        className="border py-1.5 px-3 rounded w-full bg-input-bg focus:outline-none focus:ring-0 focus:border-grey-600 mb-2"
         min={0}
         onChange={handleChange}
       />
