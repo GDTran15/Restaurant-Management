@@ -6,6 +6,7 @@ import com.duong.RestaurantManagement.dto.food.response.GetFoodListDTO;
 import com.duong.RestaurantManagement.dto.food.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.service.FoodService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class FoodController {
     private final FoodService foodService;
 
     @PostMapping()
-    public ResponseEntity<String> addFood(@RequestBody AddFoodRequestDTO addFoodRequestDTO) {
+    public ResponseEntity<String> addFood(@RequestBody @Valid AddFoodRequestDTO addFoodRequestDTO) {
         foodService.createNewFood(addFoodRequestDTO);
         return ResponseEntity.ok("Successfully added food");
     }

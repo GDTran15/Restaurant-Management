@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record AddMenuRequestDTO(
-        @NotBlank
+        @NotBlank(message = "Please fill in menu name")
         String menuName,
-        @NotBlank
+        @NotBlank(message = "Please fill in menu description")
         String menuDescription
 ) {
 }

@@ -10,21 +10,21 @@ public record AddFoodRequestDTO(
         String foodName,
 
         @NotNull(message = "Food availability must be specified")
-        boolean isAvailable,
+        Boolean isAvailable,
 
         @NotBlank(message = "Description must not be empty")
         String description,
 
-        @NotNull(message = "Quantity must not be null")
+        @NotNull(message = "Quantity must not be empty")
         @Positive(message = "Quantity must be greater than 0")
-        int quantity,
+        Integer quantity,
 
         @NotBlank(message = "Food image URL must not be empty")
         String foodImageUrl,
 
-        @NotNull(message = "Price must not be null")
+        @NotNull(message = "Price must not be empty")
         @Positive(message = "Price must be greater than 0")
-        double price,
+        Double price,
 
         @NotNull(message = "Food category must be selected")
         Long foodCategoryId
