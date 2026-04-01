@@ -10,6 +10,7 @@ export default function MenuManagementPage() {
     const [menuName,setMenuName] = useState("");
     const [menuDescription,setMenuDescription] = useState("");
     const [menuList,setMenuList] = useState([]);
+    const [error,setError] = useState([]);
 
      const handleAddMenu = async () => {
       
@@ -24,7 +25,7 @@ export default function MenuManagementPage() {
             setMenuDescription("");
            
         } catch (error) {
-            console.log(error.response);
+            setError(error.response.data);
            
         }
     }
@@ -36,7 +37,7 @@ export default function MenuManagementPage() {
             
            
         } catch (error) {
-            console.log(error.response);
+            console.log(error.response.data);
            
         }
     }
@@ -49,8 +50,8 @@ export default function MenuManagementPage() {
         <div>
         <FormWrapper width ={"full"} title={"Add Menu"} submitFuntion={handleAddMenu}>
              <div className="grid md:grid-cols-2  grid-cols-1 gap-3">
-                 <InputField inputType={"text"} label={"Menu Name"} value={menuName} setValue={setMenuName}> </InputField>                   
-                 <InputField inputType={"text"} label={"Menu Description"} value={menuDescription} setValue={setMenuDescription}></InputField>   
+                 <InputField inputType={"text"} label={"Menu Name"} value={menuName} setValue={setMenuName} error={error.menuName}> </InputField>                   
+                 <InputField inputType={"text"} label={"Menu Description"} value={menuDescription} setValue={setMenuDescription} error={error.menuDescription}></InputField>   
               </div>
                                     
                                              

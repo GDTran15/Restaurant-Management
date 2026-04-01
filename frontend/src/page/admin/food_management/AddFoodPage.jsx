@@ -17,6 +17,7 @@ export default function AddFoodPage() {
     const [imageUrl, setImageUrl] = useState("");
     const [isAvailable, setIsAvailable] = useState(false);
     const [foodCategories,setFoodCategories] = useState([]);
+    const [error,setError] = useState([]);
  
 
     const handleAddFood = async () => {
@@ -42,7 +43,7 @@ export default function AddFoodPage() {
             setImageUrl("");
             setIsAvailable(false);
         } catch (error) {
-            console.log(error);
+            setError(error.response.data);
         }
     }
 
@@ -76,18 +77,18 @@ export default function AddFoodPage() {
                      <FormWrapper width ={"full"} title={"Add Food"} submitFuntion={handleAddFood}>
                            
                          <div className=" grid grid-cols-2 gap-2 mb-2">
-                                    <InputField  label={"Food Name"} value={foodName} setValue={setFoodName}/>
-                                    <SelectInput label={"Category"} value={categoryId} setValue={setCategoryId} itemList={foodCategories} itemName={"foodCategoryName"} itemValue={"foodCategoryId"} />
-                                    <InputField inputType={"number"} step={0.01} label={"Price"} value={price} setValue={setPrice}/>
-                                    <InputField inputType={"number"}  label={"Quantity"} value={quantity} setValue={setQuantity}/>
+                                    <InputField  label={"Food Name"} value={foodName} setValue={setFoodName} error={error.foodName}/>
+                                    <SelectInput label={"Category"} value={categoryId} setValue={setCategoryId} error={error.foodCategoryId} itemList={foodCategories} itemName={"foodCategoryName"} itemValue={"foodCategoryId"} />
+                                    <InputField inputType={"number"} step={0.01} label={"Price"} error={error.price} value={price} setValue={setPrice}/>
+                                    <InputField inputType={"number"}  label={"Quantity"} error={error.quantity} value={quantity} setValue={setQuantity}/>
                                     
                                                                 
                             
                                 <div className=" col-span-2">
-                                    <InputField  label={"Description"} value={description} setValue={setDescription}/>
+                                    <InputField  label={"Description"} error={error.description} value={description} setValue={setDescription}/>
                                 </div>
 
-                                   <UploadImage label={"Food Image"} value={imageUrl} setValue={setImageUrl}/>
+                                   <UploadImage label={"Food Image"} value={imageUrl} setValue={setImageUrl} error={error.foodImageUrl}/>
                                     <div className="flex justify-start items-end col-span-2 mb-3 md:col-span-1 md:justify-end" >
                                     <Switch value={isAvailable} setValue={setIsAvailable} />
                                     </div>

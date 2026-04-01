@@ -2,7 +2,7 @@ import { useState } from "react"
 import { GoUpload } from "react-icons/go";
 
 
-export default function UploadImage({label, value, setValue}){
+export default function UploadImage({label, value, setValue,error}){
     
 
 
@@ -15,9 +15,15 @@ export default function UploadImage({label, value, setValue}){
     return(
         <>
         <div>
-            <label className=" block text-base mb-2 font-semibold">
+            <div className="flex gap-2">
+             <label className=" block text-base mb-2 font-semibold">
                 {label}
             </label>
+                    {
+                error ? <i className="text-red-500">*{error}</i> : ""
+            }
+            </div>
+           
             
             <div className="flex flex-col">
                 <label htmlFor="inputFile" className=" bg-input-bg inline-flex h-10 w-40 items-center gap-2 p-1.5 border rounded-xl
