@@ -1,9 +1,11 @@
 package com.duong.RestaurantManagement.config;
 
+import com.duong.RestaurantManagement.model.Role;
 import com.duong.RestaurantManagement.serviceImp.MyUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -14,11 +16,17 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.nio.charset.Charset;
 import java.util.List;
+
+import static com.duong.RestaurantManagement.model.Permission.*;
+import static com.duong.RestaurantManagement.model.Role.ADMIN;
+import static com.duong.RestaurantManagement.model.Role.MANAGER;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +38,7 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) {
+
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(c -> {
@@ -44,21 +53,49 @@ public class SecurityConfiguration {
                         c.configurationSource(source);
                     })
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/register",
-                                        "/roles/**",
-                                        "/orders/**",
-                                        "/dining-sessions/**",
-                                        "/menus/**",
-                                        "/login","/menu-items/**",
-                                        "/food-categories/**",
-                                        "/tables/**",
-                                        "/foods/**",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui.html",
+                        authorizeRequests.requestMatchers("/authenticate","/refresh-token").permitAll()
+                                .requestMatchers("/register").hasAnyRole(ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority(ADMIN_READ.getPermission())
+                                .requestMatchers(HttpMethod.GET, "/users/{userId}/**").hasAnyAuthority(ADMIN_READ.getPermission(),MANAGER_READ.getPermission())
+                                .requestMatchers(HttpMethod.DELETE, "/users/**").hasAnyAuthority(ADMIN_DELETE.getPermission())
+                                .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyAuthority(ADMIN_UPDATE.getPermission())
+                                .requestMatchers("/users/**").hasAnyRole(ADMIN.name(),MANAGER.name())
+                                .requestMatchers("/roles/**").hasAnyRole(ADMIN.name())
+                                .requestMatchers("/menus/**", "/foods/**", "/food-categories/**")
+                                .hasAnyAuthority(
+                                        ADMIN_READ.getPermission(),
+                                        MANAGER_READ.getPermission(),
+                                        MANAGER_CREATE.getPermission(),
+                                        MANAGER_UPDATE.getPermission(),
+                                        MANAGER_DELETE.getPermission()
+                                )
+                                .requestMatchers("/tables/**", "/dining-sessions/**")
+                                .hasAnyAuthority(
+                                        MANAGER_READ.getPermission(),
+                                        MANAGER_CREATE.getPermission(),
+                                        MANAGER_UPDATE.getPermission(),
+                                        MANAGER_DELETE.getPermission()
+                                )
+                                .requestMatchers("/orders/**")
+                                .hasAnyAuthority(
+                                        MANAGER_READ.getPermission(),
+                                        MANAGER_UPDATE.getPermission(),
+                                        MANAGER_CREATE.getPermission()
+                                )
+//                                        "/roles/**",
+//                                        "/orders/**",
+//                                        "/dining-sessions/**",
+//                                        "/menus/**",
+//                                        "/login","/menu-items/**",
+//                                        "/food-categories/**",
+//                                        "/tables/**",
+//                                        "/foods/**",
+//                                        "/swagger-ui/**",
+//                                        "/v3/api-docs/**",
+//                                        "/swagger-ui.html",
+//
+//                                "/cookies"
 
-                                "/cookies"
-                                ).permitAll()
                                 .anyRequest().authenticated())
                     .sessionManagement(sessionManagement
                             -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
