@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
       async (error) => {
         const originalRequest = error.config;
         if (
-             error.response?.status === 401 
+             error.response?.status === 403 
             
                 ){
                     try {
