@@ -8,7 +8,7 @@ import FormWrapper from "../component/FormWrapper";
 import InputField from "../component/InputField";
 import Button from "../component/Button";
 
-export default function LoginPage(){
+export default function LoginPage({setUser}){
     const navigate = useNavigate();
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
@@ -19,13 +19,16 @@ export default function LoginPage(){
                 {
                     username : username,
                     password : password
+                },{
+                    withCredentials: true
                 }
             )
-            const role = response.data.role;
-            if(role === "ADMIN"){
+            
+            
+            setUser(response.data)
                 localStorage.setItem("username", response.data.username);
-                navigate("/admin/home");
-            }
+                navigate("/admin");
+            
 
         } catch (error) {
             console.log(error);

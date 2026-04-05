@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 
@@ -16,8 +16,10 @@ import CustomerMenuPage from './page/customer/CustomerMenuPage.jsx'
 import CustomerOrderPage from './page/customer/CustomerOrderPage.jsx'
 import OrderManagementPage from './page/admin/order/OrderManagementPage.jsx'
 
+
+
 const router = createBrowserRouter([
-  { path: "/login", element: <LoginPage /> },
+  { path: "/login", element: <LoginPage  /> },
   {
     path: "/admin",
     element: <AdminHomePage />,

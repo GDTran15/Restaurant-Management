@@ -2,8 +2,10 @@ package com.duong.RestaurantManagement.config;
 
 import com.duong.RestaurantManagement.service.JwtService;
 import com.duong.RestaurantManagement.serviceImp.MyUserDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +27,34 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+
         String header = request.getHeader("Authorization");
         String token = null;
         String username = null;
-        if (header != null && header.startsWith("Bearer ")) {
-            token = header.substring(7);
-            username = jwtService.extractUsername(token);
-        }
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
-            if (jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        try {
+            if (header != null && header.startsWith("Bearer ")) {
+                token = header.substring(7);
+                username = jwtService.extractUsername(token);
             }
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
+                if (jwtService.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                }
+            }
+            filterChain.doFilter(request, response);
+        }catch (ExpiredJwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("""
+        {"code":"TOKEN_EXPIRED","message":"Unauthorized"}
+    """);
         }
-        filterChain.doFilter(request, response);
     }
     }
 
