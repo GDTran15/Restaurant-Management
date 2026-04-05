@@ -7,31 +7,33 @@ import { useNavigate } from "react-router-dom";
 import FormWrapper from "../component/FormWrapper";
 import InputField from "../component/InputField";
 import Button from "../component/Button";
+import { useAuth } from "./authentication/AuthProvider";
+import api from "../api";
 
-export default function LoginPage({setUser}){
+
+export default function LoginPage(){
     const navigate = useNavigate();
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
+    const { setToken } = useAuth();
 
     const loginForUser = async () =>{
         try {
-            const response = await axios.post(`http://localhost:8080/login`,
+            const response = await api.post(`/authenticate`,
                 {
                     username : username,
                     password : password
-                },{
-                    withCredentials: true
                 }
             )
             
-            
-            setUser(response.data)
-                localStorage.setItem("username", response.data.username);
-                navigate("/admin");
+            setToken(response.data.accessToken);
+            api.defaults.headers.common["Authorization"] = `Bearer ${response.data.accessToken}`;
+
+             navigate("/admin");
             
 
         } catch (error) {
-            console.log(error);
+            console.log(error.response);
         }
     }
 

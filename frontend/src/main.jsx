@@ -15,6 +15,7 @@ import MenuDetailPage from './page/admin/menu/MenuDetailPage.jsx'
 import CustomerMenuPage from './page/customer/CustomerMenuPage.jsx'
 import CustomerOrderPage from './page/customer/CustomerOrderPage.jsx'
 import OrderManagementPage from './page/admin/order/OrderManagementPage.jsx'
+import { AuthProvider } from './page/authentication/AuthProvider.jsx'
 
 
 
@@ -44,6 +45,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <AuthProvider>
     <RouterProvider router={router}/>
+    </AuthProvider>
   </StrictMode>,
 )

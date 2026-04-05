@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import AdminOrderCard from "../../../component/AdminOrderCard";
+import api from "../../../api";
 
 export default function InProgressOrder(){
         const [inProgressOrderList,setInProgressOrderList] = useState([]);
@@ -8,7 +8,7 @@ export default function InProgressOrder(){
      useEffect(() => {
          const handleGetInProgressOrder = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/orders/in-progress`);
+            const response = await api.get(`/orders/in-progress`);
             console.log(response);
             setInProgressOrderList(response.data)
         } catch (error) {

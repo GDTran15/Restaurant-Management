@@ -1,6 +1,7 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import AdminOrderCard from "../../../component/AdminOrderCard";
+import api from "../../../api";
 
 export default function CompleteOrder(){
         const [completeOrderList,setCompleteOrderList] = useState([]);
@@ -8,7 +9,7 @@ export default function CompleteOrder(){
      useEffect(() => {
          const handleGetCompleteOrderList = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/orders/completed`);
+            const response = await api.get(`/orders/completed`);
             console.log(response);
             setCompleteOrderList(response.data)
         } catch (error) {

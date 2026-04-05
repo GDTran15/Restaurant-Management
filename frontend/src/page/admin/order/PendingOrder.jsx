@@ -1,7 +1,8 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
-import Button from "../../../component/Button";
+
 import AdminOrderCard from "../../../component/AdminOrderCard";
+import api from "../../../api";
 
 export default function PendingOrder(){
         const [pendingOrderList,setPendingOrderList] = useState([]);
@@ -9,7 +10,7 @@ export default function PendingOrder(){
      useEffect(() => {
          const handleGetPendingOrder = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/orders/pending`);
+            const response = await api.get(`/orders/pending`);
             console.log(response);
             setPendingOrderList(response.data)
         } catch (error) {

@@ -1,9 +1,10 @@
-import axios from "axios";
+
 import SearchBar from "../../../component/SearchBar";
 import { useEffect, useState } from "react";
 import Button from "../../../component/Button";
 import Pagination from "../../../component/Pagination";
 import { CiCircleRemove } from "react-icons/ci";
+import api from "../../../api";
 
 export default function AddFoodIntoMenu({menuName, menuId, setModalIsShow,fetchMenuFood}){
     const [search,setSearch] = useState("");
@@ -16,7 +17,7 @@ export default function AddFoodIntoMenu({menuName, menuId, setModalIsShow,fetchM
     //getFood
     const handleGetFoodToAdd = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/foods/for-menu`,{
+            const response = await api.get(`/foods/for-menu`,{
               params: {page,size : 9,search,menuId}
             });
             
@@ -29,7 +30,7 @@ export default function AddFoodIntoMenu({menuName, menuId, setModalIsShow,fetchM
 
     const handleAddFoodIntoMenu = async () => {
       try {
-          const response = await axios.post(`http://localhost:8080/menu-items`,{
+          const response = await api.post(`/menu-items`,{
             menuId: menuId,
             foodIdList: foodsAddIntoMenuId
           })

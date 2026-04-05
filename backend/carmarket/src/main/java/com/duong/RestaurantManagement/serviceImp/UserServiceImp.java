@@ -68,21 +68,21 @@ public class UserServiceImp implements UserService {
 
     }
 
-    public UserLoginResponseDTO loginForUser(@Valid UserLoginRequestDTO userLoginRequestDTO, HttpServletResponse httpServletResponse) {
-        Authentication authentication= authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(userLoginRequestDTO.username(), userLoginRequestDTO.password()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-        String token = jwtService.generateToken(userPrincipal);
-        Cookie cookie = new Cookie("token", token);
-        cookie.setMaxAge(60*60*24);
-        cookie.setHttpOnly(true); //mean no js
-        cookie.setPath("/");    // send cookies to all
-        cookie.setSecure(true);
-        httpServletResponse.addCookie(cookie); // 1 day
-        httpServletResponse.setStatus(200);
-        User user = userRepo.findByUsername(userLoginRequestDTO.username()).get();
-        return new UserLoginResponseDTO(user.getUsername(), user.getRole());
-    }
+//    public UserLoginResponseDTO loginForUser(@Valid UserLoginRequestDTO userLoginRequestDTO, HttpServletResponse httpServletResponse) {
+//        Authentication authentication= authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(userLoginRequestDTO.username(), userLoginRequestDTO.password()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+//
+//        String token = jwtService.generateToken(userPrincipal);
+//        Cookie cookie = new Cookie("token", token);
+//        cookie.setMaxAge(60*60*24);
+//        cookie.setHttpOnly(true); //mean no js
+//        cookie.setPath("/");    // send cookies to all
+//        cookie.setSecure(false); //
+//        httpServletResponse.addCookie(cookie); // 1 day
+//        httpServletResponse.setStatus(200);
+//        User user = userRepo.findByUsername(userLoginRequestDTO.username()).get();
+//        return new UserLoginResponseDTO(user.getUsername(), user.getRole());
+//    }
 }
 

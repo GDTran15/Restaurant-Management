@@ -1,9 +1,10 @@
-import axios from "axios"
+
 import { useEffect, useState } from "react";
 import PendingOrder from "./PendingOrder";
 import InProgressOrder from "./InProgressOrder";
 import CompleteOrder from "./CompleteOrder";
 import CancelledOrder from "./CancelledOrder";
+import api from "../../../api";
 
 export default function OrderManagementPage(){
    
@@ -51,7 +52,7 @@ export default function OrderManagementPage(){
    useEffect(() => {
          const handleGetOrderStatusCount = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/orders/count/session`);
+            const response = await api.get(`/orders/count/session`);
             console.log(response);
             setOrderStatusCount(response.data);
         } catch (error) {

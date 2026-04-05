@@ -3,8 +3,9 @@ import Button from "../../../component/Button";
 import FormWrapper from "../../../component/FormWrapper";
 import InputField from "../../../component/InputField";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import MenuCard from "../../../component/MenuCard";
+import api from "../../../api";
 
 export default function MenuManagementPage() {
     const [menuName,setMenuName] = useState("");
@@ -15,7 +16,7 @@ export default function MenuManagementPage() {
      const handleAddMenu = async () => {
       
         try {
-            const response = await axios.post(`http://localhost:8080/menus`, {
+            const response = await api.post(`/menus`, {
                 
                 menuName : menuName,
                 menuDescription : menuDescription
@@ -32,7 +33,7 @@ export default function MenuManagementPage() {
      const handleGetMenu = async () => {
       
         try {
-            const response = await axios.get(`http://localhost:8080/menus`)
+            const response = await api.get(`/menus`)
             setMenuList(response.data);
             
            

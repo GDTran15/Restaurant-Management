@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchBar from "../../../component/SearchBar";
 import axios from "axios";
 import FoodCard from "../../../component/FoodCard";
+import api from "../../../api";
 
 export default function ViewFoodPage(){
     const [search,setSearch] = useState("");
@@ -13,7 +14,7 @@ export default function ViewFoodPage(){
   
     const searchForFood = async (search) => {
         try {
-            const response = await axios.get(`http://localhost:8080/foods`,{
+            const response = await api.get(`foods`,{
                 params: {page,size : 9,search}
             })
             console.log(response);

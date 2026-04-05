@@ -4,7 +4,7 @@ import FormWrapper from "../../../component/FormWrapper";
 import InputField from "../../../component/InputField";
 import SelectInput from "../../../component/SelectInput";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api";
 
 export default function StaffManagementPage() {
     const [roleList,setRoleList] = useState([]);
@@ -18,7 +18,7 @@ export default function StaffManagementPage() {
     useEffect(() => {
          const handleGetRoles = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/roles`)
+            const response = await api.get(`/roles`)
            
             setRoleList(response.data)
         } catch (error) {
@@ -31,19 +31,21 @@ export default function StaffManagementPage() {
 
     const handleAddUser = async () => {
         try {
-            const response = await axios.post(`http://localhost:8080/register`,{
+            const response = await api.post(`/register`,{
                 "username": username,
                 "password": password,
                 "email": email,
                 "phone": phone,
                 "role": role
             })
+            console.log(response)
             setUsername("");
             setPassword("");
             setEmail("");
             setPhone("");
             setRole(null);
             setError({});
+
         } catch (error) {
             setError(error.response.data);
         }

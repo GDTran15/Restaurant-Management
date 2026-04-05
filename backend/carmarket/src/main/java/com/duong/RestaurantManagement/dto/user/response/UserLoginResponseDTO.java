@@ -4,6 +4,7 @@ import com.duong.RestaurantManagement.model.Role;
 
 public record UserLoginResponseDTO(
         String username,
-        Role role
+        Role role,
+        String accessToken
 ) {
 }

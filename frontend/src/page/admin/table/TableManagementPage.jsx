@@ -3,8 +3,9 @@ import Button from "../../../component/Button";
 import FormWrapper from "../../../component/FormWrapper";
 import { useEffect, useState } from "react";
 import InputField from "../../../component/InputField";
-import axios from "axios";
+
 import TableCard from "../../../component/TableCard";
+import api from "../../../api";
 
 export default function TableManagementPage() {
     
@@ -19,7 +20,7 @@ export default function TableManagementPage() {
     const handleAddTable = async () => {
       
         try {
-            const response = await axios.post(`http://localhost:8080/tables`, {
+            const response = await api.post(`/tables`, {
                 
                 tableNumber : restaurantTableNumber,
                 capacity : capacity
@@ -43,7 +44,7 @@ export default function TableManagementPage() {
 
     const handleGetTable = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/tables`)
+            const response = await api.get(`tables`)
             console.log(response);
             setTableList(response.data)
         } catch (error) {
@@ -54,7 +55,7 @@ export default function TableManagementPage() {
 
     const handleDeleteTable = async (restaurantTableId) => {
         try {
-            await axios.delete(`http://localhost:8080/tables/${restaurantTableId}`);
+            await api.delete(`/tables/${restaurantTableId}`);
             handleGetTable();
         } catch (error) {
             console.log(error);

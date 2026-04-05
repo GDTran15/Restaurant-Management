@@ -1,6 +1,7 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import AdminOrderCard from "../../../component/AdminOrderCard";
+import api from "../../../api";
 
 export default function CancelledOrder(){
         const [cancelledOrderList,setCancelledOrderList] = useState([]);
@@ -8,7 +9,7 @@ export default function CancelledOrder(){
      useEffect(() => {
          const handleGetCancelledOrderList = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/orders/cancelled`);
+            const response = await api.get(`/orders/cancelled`);
             console.log(response);
             setCancelledOrderList(response.data)
         } catch (error) {

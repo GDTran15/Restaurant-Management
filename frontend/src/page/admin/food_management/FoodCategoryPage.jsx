@@ -5,7 +5,8 @@ import InputField from "../../../component/InputField";
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import axios from "axios";
+
+import api from "../../../api";
 
 export default function FoodCategoryPage(){
     const[foodCategoryName,setFoodCategoryName] = useState("");
@@ -15,7 +16,7 @@ export default function FoodCategoryPage(){
 
     const fetchFoodCategory = async () =>{
         try {
-            const response = await axios.get(`http://localhost:8080/food-categories/food-count`);
+            const response = await api.get(`/food-categories/food-count`);
             console.log(response.data);
             setFoodCategory(response.data);
         } catch (error) {
@@ -29,8 +30,8 @@ export default function FoodCategoryPage(){
 
     const createNewCategory = async () => {
             try {
-            const response = await axios.post(
-                `http://localhost:8080/food-categories`,
+            const response = await api.post(
+                `/food-categories`,
                 null, // no request body
                 {
                     params: {
@@ -48,8 +49,8 @@ export default function FoodCategoryPage(){
         
     const updateCategoryName = async () => {
             try {
-            const response = await axios.put(
-                `http://localhost:8080/food-categories/${updateCategoryId}`,
+            const response = await api.put(
+                `/food-categories/${updateCategoryId}`,
                 null, // no request body
                 {
                     params: {
@@ -68,8 +69,8 @@ export default function FoodCategoryPage(){
 
     const deleteFoodCategory = async (foodCategoryId) => {
             try {
-            const response = await axios.delete(
-                `http://localhost:8080/food-categories/${foodCategoryId}`
+            const response = await api.delete(
+                `/food-categories/${foodCategoryId}`
             );
             fetchFoodCategory();
             console.log(response);

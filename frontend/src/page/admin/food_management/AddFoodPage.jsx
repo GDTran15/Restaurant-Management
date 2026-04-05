@@ -6,7 +6,8 @@ import SelectInput from "../../../component/SelectInput";
 import UploadImage from "../../../component/UploadImage";
 import Switch from "../../../component/Switch";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api";
+
 
 export default function AddFoodPage() {
     const [foodName,setFoodName] = useState("");
@@ -23,7 +24,7 @@ export default function AddFoodPage() {
     const handleAddFood = async () => {
         
         try {
-            const response = await axios.post(`http://localhost:8080/foods`,{
+            const response = await api.post(`/foods`,{
                 foodName,
                 isAvailable,
                 description,
@@ -49,7 +50,7 @@ export default function AddFoodPage() {
 
         const fetchFoodCategory = async () =>{
         try {
-            const response = await axios.get(`http://localhost:8080/food-categories`);
+            const response = await api.get(`/food-categories`);
             
             setFoodCategories(response.data)
             

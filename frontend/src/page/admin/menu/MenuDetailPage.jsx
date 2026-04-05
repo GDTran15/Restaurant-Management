@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { use, useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { IoAdd } from "react-icons/io5";
@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom"
 import Button from "../../../component/Button";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import AddFoodIntoMenu from "./AddFoodIntoMenu";
+import api from "../../../api";
 
 export default function MenuDetailPage(){
     const {menuId} = useParams();
@@ -19,7 +20,7 @@ export default function MenuDetailPage(){
      const handleGetMenu = async () => {
       
         try {
-            const response = await axios.get(`http://localhost:8080/menus/${menuId}`);
+            const response = await api.get(`/menus/${menuId}`);
             console.log(response);
             setMenuDetail(response.data);
             
@@ -32,7 +33,7 @@ export default function MenuDetailPage(){
      const handleGetMenuFood = async () => {
       
         try {
-            const response = await axios.get(`http://localhost:8080/menus/${menuId}/foods`,{
+            const response = await api.get(`/menus/${menuId}/foods`,{
                 params: {page,size : 9,search}
             });
             
@@ -47,7 +48,7 @@ export default function MenuDetailPage(){
      const handleDeleteMenuItem = async (menuId,foodId) => {
        
       try {
-        const response = await axios.delete(`http://localhost:8080/menu-items`,{
+        const response = await api.delete(`/menu-items`,{
             params:{
                      menuId : menuId,
                      foodId : foodId
