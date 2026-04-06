@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -50,13 +51,18 @@ public class JwtService {
 
     }
 
+    public boolean isTokenValid(String token, String expectedUsername) {
+        String username = extractUsername(token);
+        return username.equals(expectedUsername) && !isTokenExpired(token);
+    }
+
     private String buildToken(Map <String,Object> extraClaims, UserDetails userDetails, long expiration) {
         return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .claims(extraClaims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getKey())// , SignatureAlgorithm.HS256
                 .compact();
     }
 
@@ -79,11 +85,15 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try{
+            return Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token).getPayload();
+        } catch (final JwtException  e){
+            throw
+                    new RuntimeException(e.getMessage());
+        }
     }
     public Boolean validateToken(String token, UserDetails userDetails) {
         final  String username = extractUsername(token);
