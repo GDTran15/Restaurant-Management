@@ -2,6 +2,7 @@ package com.duong.RestaurantManagement.config;
 
 import com.duong.RestaurantManagement.model.Role;
 import com.duong.RestaurantManagement.serviceImp.MyUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +38,7 @@ public class SecurityConfiguration {
     private final MyUserDetailsService myUserDetailsService;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 
         http.csrf(AbstractHttpConfigurer::disable)
@@ -99,7 +100,22 @@ public class SecurityConfiguration {
                                 .anyRequest().authenticated())
                     .sessionManagement(sessionManagement
                             -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandler ->
+                        exceptionHandler.accessDeniedHandler(
+                                (request, response, accessDeniedException) ->
+                                {
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.setContentType("application/json");
+                                    response.getWriter().write(
+                                            """
+                                                    {"message":"You are not allowed to perform this action!"}
+                                                    """);
+
+                                  }
+                        )
+                        )
+        ;
 
 
         return http.build();
