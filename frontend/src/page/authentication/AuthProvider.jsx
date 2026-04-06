@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const refreshAccessToken = async () => {
    try {
       const response = await api.post(`/refresh-token`);
+      console.
       setToken(response.data.accessToken)
    } catch  {
     setToken(null);
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const authInterceptor = api.interceptors.request.use(
       (config) => {
-        config.headers.Authorization = !config._retry && token ? `Bearer ${token}` : config.headers.Authorization;
+        config.headers.Authorization = !config._retry && token &&   !config.url.includes("/refresh-token") ? `Bearer ${token}` : config.headers.Authorization;
         return config;
       },
       (error) => Promise.reject(error)
