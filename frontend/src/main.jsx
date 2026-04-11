@@ -16,24 +16,33 @@ import CustomerMenuPage from './page/customer/CustomerMenuPage.jsx'
 import CustomerOrderPage from './page/customer/CustomerOrderPage.jsx'
 import OrderManagementPage from './page/admin/order/OrderManagementPage.jsx'
 import { AuthProvider } from './page/authentication/AuthProvider.jsx'
+import ProtectedRoute from './page/authentication/ProtectedRoute.jsx'
+
 
 
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage  /> },
+  
   {
-    path: "/admin",
-    element: <AdminHomePage />,
+    element: <ProtectedRoute/>,
     children: [
-      { index: true, element: <AdminDashboardPage /> },
-      { path: "foods", element: <FoodManagementPage /> },
-      { path: "menus", element: <MenuManagementPage /> },
-      { path: "menus/:menuId", element: <MenuDetailPage /> },
-      { path: "staffs", element: <StaffManagementPage /> },
-      { path: "tables", element: <TableManagementPage /> },
-      { path: "orders", element: <OrderManagementPage/>}
-    ],
+      {
+        path: "/admin",
+        element: <AdminHomePage />,
+        children: [
+          { index: true, element: <AdminDashboardPage /> },
+          { path: "foods", element: <FoodManagementPage /> },
+          { path: "menus", element: <MenuManagementPage /> },
+          { path: "menus/:menuId", element: <MenuDetailPage /> },
+          { path: "staffs", element: <StaffManagementPage /> },
+          { path: "tables", element: <TableManagementPage /> },
+          { path: "orders", element: <OrderManagementPage/>}
+        ],
   },
+    ]
+  },
+  
   {
     path: "/customer/menu/:token", element: <CustomerMenuPage/>
     

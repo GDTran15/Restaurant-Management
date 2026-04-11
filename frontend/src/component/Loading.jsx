@@ -1,7 +1,7 @@
-export default function Loading({ref}){
-    return(<>
-        <div ref={ref} className=" loading">
+import { forwardRef } from "react";
 
-        </div>
-    </>)
-}
+const Loading = forwardRef((props, ref) => {
+  return <div ref={ref} className="loading"></div>;
+});
+
+export default Loading;

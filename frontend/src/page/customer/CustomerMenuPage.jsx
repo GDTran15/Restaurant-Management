@@ -5,8 +5,9 @@ import { useInView } from "react-intersection-observer";
 import CustomerMenuNavbar from "../../component/CustomerMenuNavBar";
 import MenuSection from "../../component/MenuSection";
 import CartSidebar from "../../component/CartSidebar";
-import axios from "axios";
+
 import { data, useNavigate, useParams } from "react-router-dom";
+import api from "../../api";
 
 
 export default function CustomerMenuPage() {
@@ -24,12 +25,13 @@ export default function CustomerMenuPage() {
     async load({ signal, cursor }) {
       const page = cursor ?? 0;
 
-      const res = await fetch(
-        `http://localhost:8080/menus/active?page=${page}&size=9`,
-        { signal }
-      );
-
-      const json = await res.json();
+         const res = await api.get(`/menus/active?page=${page}&size=9`, {
+      signal,
+      isPublic: true,
+    });
+      console.log(res);
+      const json =  res.data;
+      console.log("API DATA:", json);
 
       setCategoryList(json.foodCategory);
       setMenuName(json.menuName);
@@ -47,8 +49,8 @@ export default function CustomerMenuPage() {
 useEffect(() => {
   const authenticateDiningSession = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/dining-sessions",
+      const response = await api.get(
+        "/dining-sessions",
         { params: { tableQrToken: token } }
       );
       console.log(response)
@@ -64,8 +66,8 @@ useEffect(() => {
 }, [token]);
  const submitOrder = async () => {
   try {
-    const response = await axios.post(
-      "http://localhost:8080/orders",
+    const response = await api.post(
+      "/orders",
       {
         diningSessionId: diningSessionId,
         orderItemDTOS: cartList
@@ -199,6 +201,7 @@ useEffect(() => {
             onAddFood={handleAddFood}
             loadingRef={ref}
             hasMore={list.cursor !== null}
+            isLoading={list.isLoading}
           />
 
           

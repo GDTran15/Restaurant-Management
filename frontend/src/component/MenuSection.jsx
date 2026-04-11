@@ -8,6 +8,7 @@ export default function MenuSection({
   onAddFood,
   loadingRef,
   hasMore,
+  isLoading
 }) {
   return (
     <div className="flex-1 space-y-10">
@@ -29,7 +30,11 @@ export default function MenuSection({
         );
       })}
 
-      {hasMore && <Loading ref={loadingRef} />}
+      {hasMore && (
+      <div ref={loadingRef}>
+        {isLoading && <Loading />}
+      </div>
+    )}
     </div>
   );
 }

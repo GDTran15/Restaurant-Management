@@ -25,13 +25,16 @@ export const AuthProvider = ({ children }) => {
     
   const refreshAccessToken = async () => {
    try {
-      const response = await api.post(`/refresh-token`);
-      console.
+      const response = await api.post(`/refresh-token`,{
+        isPublic : true
+      });
+      console.log("access token generate, " + response.data.accessToken)
       setToken(response.data.accessToken)
    } catch  {
     setToken(null);
-   }
-  };
+   } finally{
+    setIsLoading(false);
+   }  };
 
   refreshAccessToken();
   },[])
@@ -41,7 +44,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const authInterceptor = api.interceptors.request.use(
       (config) => {
-        config.headers.Authorization = !config._retry && token &&   !config.url.includes("/refresh-token") ? `Bearer ${token}` : config.headers.Authorization;
+        
+        config.headers.Authorization = !config._retry && token &&  !config.isPublic ? `Bearer ${token}` : config.headers.Authorization;
         return config;
       },
       (error) => Promise.reject(error)
@@ -61,8 +65,9 @@ export const AuthProvider = ({ children }) => {
       async (error) => {
         const originalRequest = error.config;
         if (
-             error.response?.status === 403 
-            
+             error.response?.status === 401 
+               && !originalRequest._retry &&
+  !originalRequest.url.includes("/refresh-token")
                 ){
                     try {
                         const response = await api.post(`/refresh-token`);
