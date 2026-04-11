@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl  implements AuthenticationService {
 
     private final UserRepo userRepo;
@@ -94,6 +96,10 @@ public class AuthenticationServiceImpl  implements AuthenticationService {
 
     @Override
     public void refreshToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
+        log.info("Refresh token");
+        log.warn("Refresh token");
+        log.debug("Refresh token");
+
         Cookie[] cookie = httpServletRequest.getCookies();
         String refreshToken = "";
         for (Cookie c : cookie) {

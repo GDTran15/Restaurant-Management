@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                         c.configurationSource(source);
                     })
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/authenticate","/refresh-token").permitAll()
+                        authorizeRequests.requestMatchers("/authenticate","/refresh-token","/dining-sessions/**","/menus/**").permitAll()
                                 .requestMatchers("/register").hasAnyRole(ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority(ADMIN_READ.getPermission())
                                 .requestMatchers(HttpMethod.GET, "/users/{userId}/**").hasAnyAuthority(ADMIN_READ.getPermission(),MANAGER_READ.getPermission())
@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                                         MANAGER_UPDATE.getPermission(),
                                         MANAGER_DELETE.getPermission()
                                 )
-                                .requestMatchers("/tables/**", "/dining-sessions/**")
+                                .requestMatchers("/tables/**")
                                 .hasAnyAuthority(
                                         MANAGER_READ.getPermission(),
                                         MANAGER_CREATE.getPermission(),
@@ -115,6 +115,17 @@ public class SecurityConfiguration {
                                   }
                         )
                         )
+                .exceptionHandling(exceptionHandler -> exceptionHandler.authenticationEntryPoint(
+                        (request, response, exception) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    """
+                                           {"message":"Jwt token expired!"}
+                                           """
+                            );
+                        }
+                ))
         ;
 
 

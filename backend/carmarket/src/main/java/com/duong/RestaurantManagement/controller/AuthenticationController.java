@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +21,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -38,6 +42,7 @@ public class AuthenticationController {
     @PostMapping("/refresh-token")
     public void refreshToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws
             IOException {
+        log.info("Refresh token  api run");
         authenticationService.refreshToken(httpServletRequest,httpServletResponse);
     }
 

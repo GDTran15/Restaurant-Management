@@ -6,6 +6,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.StringUtils;
+import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -29,7 +30,7 @@ public class QRCodeService {
     }
 
     private byte[] processQRcode(String data,int width, int height) throws WriterException, IOException {
-        BitMatrix bitMatrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, width, height);
+        BitMatrix bitMatrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, width, height);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix,"PNG",baos);
         return baos.toByteArray();
