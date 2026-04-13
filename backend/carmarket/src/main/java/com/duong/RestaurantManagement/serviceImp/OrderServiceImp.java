@@ -100,7 +100,7 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public List<GetCustomerOrderDTO> getDiningSessionOrder(Long diningSessionId) {
-        List<Order> orders= orderRepo.findByDiningSession_DiningSessionId(diningSessionId);
+        List<Order> orders= getOrderFromDiningSession(diningSessionId);
         return orders.stream()
                 .map(OrderMapper::toCustomerDTO).toList();
     }
@@ -119,6 +119,11 @@ public class OrderServiceImp implements OrderService {
 
         return orders.stream()
                 .map(OrderMapper::orderToGetOrderForAdminDTO) .toList();
+    }
+
+    @Override
+    public List<Order> getOrderFromDiningSession(Long diningSessionId) {
+        return orderRepo.findByDiningSession_DiningSessionId(diningSessionId);
     }
 
     @Override

@@ -13,4 +13,6 @@ public interface DiningSessionService {
     DiningSession validateDiningSessionActiveStatus(Long aLong);
 
     void deactiveDinningSession(Long diningSessionId);
+
+    double getDiningSessionTotalOrderPrice(Long diningSessionId);
 }

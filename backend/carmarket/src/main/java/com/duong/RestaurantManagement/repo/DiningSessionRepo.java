@@ -2,6 +2,7 @@ package com.duong.RestaurantManagement.repo;
 
 import com.duong.RestaurantManagement.model.DiningSession;
 import com.duong.RestaurantManagement.model.DiningStatus;
+import com.duong.RestaurantManagement.model.RestaurantTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,8 @@ public interface DiningSessionRepo extends JpaRepository<DiningSession, Long> {
     Optional<DiningSession> findByDiningStatusAndRestaurantTable_TableQrCodeValue(DiningStatus diningStatus, String restaurantTableTableQrCodeValue);
 
     DiningSession getByDiningStatusAndRestaurantTable_TableQrCodeValue(DiningStatus diningStatus, String restaurantTable_tableQrCodeValue );
-}
+
+    Optional<DiningSession> findByDiningStatusAndRestaurantTable_RestaurantTableId(
+            DiningStatus status,
+            Long restaurantTableId
+    );}

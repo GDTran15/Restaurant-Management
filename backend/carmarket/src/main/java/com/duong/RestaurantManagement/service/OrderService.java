@@ -5,6 +5,7 @@ import com.duong.RestaurantManagement.dto.order.request.AddOrderDTO;
 import com.duong.RestaurantManagement.dto.order.response.GetCustomerOrderDTO;
 import com.duong.RestaurantManagement.dto.order.response.GetOrderForAdminDTO;
 import com.duong.RestaurantManagement.dto.order.response.GetOrderNumberForEachStatus;
+import com.duong.RestaurantManagement.model.Order;
 import com.duong.RestaurantManagement.model.OrderStatus;
 import org.jspecify.annotations.Nullable;
 
@@ -26,4 +27,6 @@ public interface OrderService {
     List<GetOrderNumberForEachStatus> getNumberOfOrderForEachStatus();
 
     List<GetOrderForAdminDTO> getOrderByStatus(OrderStatus orderStatus);
+
+    List<Order> getOrderFromDiningSession(Long diningSessionId);
 }
