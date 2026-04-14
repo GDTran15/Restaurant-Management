@@ -2,5 +2,5 @@ package com.duong.RestaurantManagement.model;
 
 
 public enum MembershipRank {
-  BRONZE,SILVER,GOLD,DIAMOND
+  NONE, BRONZE,SILVER,GOLD,DIAMOND
 }

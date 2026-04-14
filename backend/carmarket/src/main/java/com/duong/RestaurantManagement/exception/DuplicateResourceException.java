@@ -14,7 +14,4 @@ public class DuplicateResourceException extends RuntimeException {
     public DuplicateResourceException(Map<String, String> errors) {
         this.errors = errors;
     }
-    public Map<String,String> getErrors() {
-        return errors;
-    }
 }
