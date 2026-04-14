@@ -1,5 +1,7 @@
 package com.duong.RestaurantManagement.exception;
 
+import lombok.Getter;
+
 import java.util.Map;
 
 public class DuplicateResourceException extends RuntimeException {
