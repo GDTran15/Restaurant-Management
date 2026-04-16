@@ -35,6 +35,6 @@ public class MembershipServiceImp implements MembershipService {
                 .filter(membership -> spent >= membership.getMinSpent())
                 .findFirst()
                 .map(Membership::getMembershipRank)
-                .orElse(null);
+                .orElse(MembershipRank.BRONZE);
     }
 }
