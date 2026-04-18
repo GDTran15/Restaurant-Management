@@ -13,7 +13,7 @@ public record AddMemberRequest (
         Integer memberPhone,
         @NotBlank(message = "Please enter member email")
         String memberEmail,
-        @NotBlank(message = "Please enter member spent")
+        @NotNull(message = "Please enter member spent")
         Double totalSpent
 ) {
 }
