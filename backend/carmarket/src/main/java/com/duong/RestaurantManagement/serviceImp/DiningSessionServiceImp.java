@@ -6,6 +6,7 @@ import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.DiningSession;
 import com.duong.RestaurantManagement.model.DiningStatus;
 import com.duong.RestaurantManagement.model.Order;
+import com.duong.RestaurantManagement.model.RestaurantTable;
 import com.duong.RestaurantManagement.repo.DiningSessionRepo;
 import com.duong.RestaurantManagement.repo.OrderRepo;
 import com.duong.RestaurantManagement.repo.RestaurantTableRepo;
@@ -35,7 +36,10 @@ public class DiningSessionServiceImp implements DiningSessionService {
 
     @Override
     public GetDiningSessionDTO getDiningSession(String tableQrToken) {
-        restaurantTableService.validateTableToken(tableQrToken);
+        RestaurantTable restaurantTable = restaurantTableRepo.findByTableQrCodeValue(tableQrToken)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("QrCode not found for table ")
+                );
         Optional<DiningSession> diningSessionExist = diningSessionRepo.findByDiningStatusAndRestaurantTable_TableQrCodeValue(DiningStatus.ACTIVE, tableQrToken);
         if (diningSessionExist.isPresent()) {
 
@@ -46,12 +50,10 @@ public class DiningSessionServiceImp implements DiningSessionService {
                     .builder()
                     .startAt(LocalDateTime.now())
                     .diningStatus(DiningStatus.ACTIVE)
-                    .restaurantTable(restaurantTableRepo.findByTableQrCodeValue(tableQrToken)
-                            .orElseThrow(
-                                    () -> new ResourceNotFoundException("Restaurant table not found")
-                            ))
+                    .restaurantTable(restaurantTable)
                     .build();
             diningSessionRepo.save(diningSession);
+            restaurantTableService.setTableInUsed(restaurantTable);
             return new GetDiningSessionDTO(diningSession.getDiningSessionId());
 
     }

@@ -73,12 +73,12 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
         return  qrCodeService.getQrCode("http://localhost:5173/customer/menu/" + restaurantTable.getTableQrCodeValue()) ;
     }
 
-    @Override
-    public void validateTableToken(String tableQrToken) {
-         if (!restaurantTableRepo.existsByTableQrCodeValue(tableQrToken)) {
-             throw new InvalidQrCodeException("Qr code cannot be accepted");
-         }
-    }
 
+
+    @Override
+    public void setTableInUsed(RestaurantTable restaurantTable) {
+        restaurantTable.setRestaurantTableStatus(false);
+        restaurantTableRepo.save(restaurantTable);
+    }
 
 }
