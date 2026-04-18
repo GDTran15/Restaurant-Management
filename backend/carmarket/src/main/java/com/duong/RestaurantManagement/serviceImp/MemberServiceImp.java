@@ -3,16 +3,17 @@ package com.duong.RestaurantManagement.serviceImp;
 import com.duong.RestaurantManagement.dto.member.request.AddMemberRequest;
 import com.duong.RestaurantManagement.exception.DuplicateResourceException;
 import com.duong.RestaurantManagement.model.Member;
-import com.duong.RestaurantManagement.model.MembershipRank;
 import com.duong.RestaurantManagement.repo.MemberRepo;
 import com.duong.RestaurantManagement.service.MemberService;
 import com.duong.RestaurantManagement.service.MembershipService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImp implements MemberService {
@@ -24,6 +25,8 @@ public class MemberServiceImp implements MemberService {
 
     @Override
     public void addMember(AddMemberRequest addMemberRequest) {
+        log.info("add member service");
+        log.debug("add member request: {}", addMemberRequest);
         checkIfMemberInformationExist(addMemberRequest.memberPhone(), addMemberRequest.memberEmail());
         Member member =  Member.builder()
                 .firstName(addMemberRequest.firstName())
