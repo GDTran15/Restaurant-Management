@@ -18,5 +18,5 @@ public interface RestaurantTableService {
 
 
 
-    void setTableInUsed(RestaurantTable restaurantTable);
+    void changeTableStatus(RestaurantTable restaurantTable);
 }

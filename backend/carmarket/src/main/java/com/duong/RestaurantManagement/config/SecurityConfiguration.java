@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                         c.configurationSource(source);
                     })
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/members/**","/memberships/**","/authenticate","/refresh-token","/dining-sessions/**","/menus/**").permitAll()
+                        authorizeRequests.requestMatchers("/invoices/**","/members/**","/memberships/**","/authenticate","/refresh-token","/dining-sessions/**","/menus/**").permitAll()
                                 .requestMatchers("/register").hasAnyRole(ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority(ADMIN_READ.getPermission())
                                 .requestMatchers(HttpMethod.GET, "/users/{userId}/**").hasAnyAuthority(ADMIN_READ.getPermission(),MANAGER_READ.getPermission())

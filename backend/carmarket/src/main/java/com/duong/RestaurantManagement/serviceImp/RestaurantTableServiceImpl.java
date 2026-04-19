@@ -76,8 +76,8 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
 
 
     @Override
-    public void setTableInUsed(RestaurantTable restaurantTable) {
-        restaurantTable.setRestaurantTableStatus(false);
+    public void changeTableStatus(RestaurantTable restaurantTable) {
+        restaurantTable.setRestaurantTableStatus(!restaurantTable.isRestaurantTableStatus());
         restaurantTableRepo.save(restaurantTable);
     }
 

@@ -14,13 +14,20 @@ import org.springframework.web.bind.annotation.*;
 public class InvoiceController {
 
 
-    private InvoiceService invoiceService;
+    private final InvoiceService invoiceService;
 
-    @PostMapping("/{diningSessionId}")
+    @PostMapping("/{tableId}")
     public ResponseEntity<Void> addInvoice(
-            @PathVariable Long diningSessionId
-            , @RequestParam int memberPhoneNumber) {
-            invoiceService.createNewInvoice(diningSessionId,memberPhoneNumber);
+            @PathVariable Long tableId
+            ) {
+            invoiceService.createNewInvoice(tableId);
             return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{invoiceId}")
+    public ResponseEntity<Void> updateInvoiceWithMembership(@PathVariable Long invoiceId, @RequestParam int memberPhone){
+        invoiceService.invoiceChangeAfterMember(invoiceId,memberPhone);
+        return ResponseEntity.noContent().build();
+    }
+
 }

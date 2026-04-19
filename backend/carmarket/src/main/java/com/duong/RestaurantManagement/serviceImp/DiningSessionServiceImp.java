@@ -53,7 +53,7 @@ public class DiningSessionServiceImp implements DiningSessionService {
                     .restaurantTable(restaurantTable)
                     .build();
             diningSessionRepo.save(diningSession);
-            restaurantTableService.setTableInUsed(restaurantTable);
+            restaurantTableService.changeTableStatus(restaurantTable);
             return new GetDiningSessionDTO(diningSession.getDiningSessionId());
 
     }
