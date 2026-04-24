@@ -1,5 +1,5 @@
-package com.duong.RestaurantManagement.model;
+    package com.duong.RestaurantManagement.model;
 
-public enum PaymentMethod {
-    CASH, CARD, INTERNET_BANKING
-}
+    public enum PaymentMethod {
+        CASH, CARD, INTERNET_BANKING,PAYPAL
+    }
