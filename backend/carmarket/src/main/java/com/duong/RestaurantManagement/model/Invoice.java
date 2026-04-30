@@ -39,4 +39,8 @@ public class Invoice {
 
     @OneToMany(mappedBy = "invoice")
     private List<Payment> payments;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

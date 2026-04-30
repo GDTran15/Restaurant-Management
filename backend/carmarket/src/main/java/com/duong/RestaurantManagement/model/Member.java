@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @Data
@@ -30,4 +32,9 @@ public class Member {
     private MembershipRank memberRank;
 
     private double totalSpent;
+
+    @OneToMany(mappedBy = "member")
+    private List<Invoice> invoices;
+
+
 }

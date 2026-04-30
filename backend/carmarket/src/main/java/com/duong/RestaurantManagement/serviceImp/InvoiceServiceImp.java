@@ -27,6 +27,8 @@ public class InvoiceServiceImp implements InvoiceService {
 
     private final InvoiceRepo invoiceRepo;
 
+    private final MemberService memberService;
+
     private final RestaurantTableRepo restaurantTableRepo;
 
     private final RestaurantTableService restaurantTableService;
@@ -64,10 +66,19 @@ public class InvoiceServiceImp implements InvoiceService {
         Member member = memberRepo.findByMemberPhone(memberPhone).orElseThrow(
                 () -> new ResourceNotFoundException("No member found ")
         );
+        invoice.setMember(member);
 
         double discountAmount = invoice.getPayBeforeDiscount() * membershipRepo.findMembershipDiscountRateByMembershipRank(member.getMemberRank());
         invoice.setDiscountAmount(discountAmount);
         invoice.setTotalPay(invoice.getPayBeforeDiscount() - discountAmount);
+        invoiceRepo.save(invoice);
+
+    }
+
+    @Override
+    public void markInvoiceAsPaid(Invoice invoice) {
+        invoice.setInvoiceStatus(InvoiceStatus.PAID);
+        memberService.updateMemberAfterPayment(invoice.getMember(),invoice.getTotalPay());
         invoiceRepo.save(invoice);
 
     }

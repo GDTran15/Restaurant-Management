@@ -5,7 +5,9 @@ import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.*;
 import com.duong.RestaurantManagement.model.PaymentMethod;
 import com.duong.RestaurantManagement.repo.InvoiceRepo;
+import com.duong.RestaurantManagement.repo.OrderRepo;
 import com.duong.RestaurantManagement.repo.PaymentRepo;
+import com.duong.RestaurantManagement.service.InvoiceService;
 import com.duong.RestaurantManagement.service.PaymentService;
 import com.paypal.sdk.PaypalServerSdkClient;
 import com.paypal.sdk.controllers.OrdersController;
@@ -30,6 +32,7 @@ public class PaymentServiceImp implements PaymentService {
 
 
     private final InvoiceRepo invoiceRepo;
+    private final InvoiceService invoiceService;
     private final PaypalServerSdkClient paypalClient;
 
     private final PaymentRepo paymentRepo;
@@ -125,8 +128,9 @@ public class PaymentServiceImp implements PaymentService {
                 );
                 payment.setPaidAt(LocalDateTime.now());
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
-                Invoice invoice = payment.getInvoice();
-                invoice.setInvoiceStatus(InvoiceStatus.PAID);
+
+                invoiceService.markInvoiceAsPaid(payment.getInvoice());
+
                 return order;
 
             } catch (IOException | ApiException e) {

@@ -39,6 +39,14 @@ public class MemberServiceImp implements MemberService {
         memberRepo.save(member);
     }
 
+    @Override
+    public void updateMemberAfterPayment(Member member, double totalPay) {
+        member.setTotalSpent(member.getTotalSpent() + totalPay);
+        updateMemberRankAfter(member);
+        memberRepo.save(member);
+
+    }
+
     private void checkIfMemberInformationExist(int memberPhone, String memberEmail){
        boolean memberPhoneExist = memberRepo.existsByMemberPhone(memberPhone);
        boolean memberEmailExist = memberRepo.existsByMemberEmail(memberEmail);
@@ -53,4 +61,9 @@ public class MemberServiceImp implements MemberService {
            throw new DuplicateResourceException(errors);
        }
     }
+
+    private void updateMemberRankAfter(Member member){
+        member.setMemberRank(membershipService.identifyMembershipRank(member.getTotalSpent()));
+    }
+
 }
