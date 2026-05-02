@@ -79,6 +79,13 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(value = InvoiceHasBeenPaidException.class)
+    public ResponseEntity<ErrorApiResponse> invoiceHasBeenPaid(InvoiceHasBeenPaidException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage())
+                );
+    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
