@@ -9,8 +9,8 @@ public record AddMemberRequest (
         String firstName,
         @NotBlank(message = "Please enter member last name")
         String lastName,
-        @NotNull(message = "Please enter member phone number")
-        Integer memberPhone,
+        @NotBlank(message = "Please enter member phone number")
+        String memberPhone,
         @NotBlank(message = "Please enter member email")
         String memberEmail,
         @NotNull(message = "Please enter member spent")
