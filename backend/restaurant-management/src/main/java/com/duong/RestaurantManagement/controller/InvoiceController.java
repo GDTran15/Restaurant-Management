@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.controller;
 
 
+import com.duong.RestaurantManagement.dto.invoice.response.InvoiceResponseDTO;
 import com.duong.RestaurantManagement.model.Invoice;
 import com.duong.RestaurantManagement.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
@@ -17,17 +18,17 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     @PostMapping("/{tableId}")
-    public ResponseEntity<Void> addInvoice(
+    public ResponseEntity<InvoiceResponseDTO> addInvoice(
             @PathVariable Long tableId
             ) {
-            invoiceService.createNewInvoice(tableId);
-            return ResponseEntity.noContent().build();
+
+            return ResponseEntity.ok(invoiceService.createNewInvoice(tableId));
     }
 
-    @PutMapping("/{invoiceId}")
-    public ResponseEntity<Void> updateInvoiceWithMembership(@PathVariable Long invoiceId, @RequestParam int memberPhone){
-        invoiceService.invoiceChangeAfterMember(invoiceId,memberPhone);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/addMember/{invoiceId}")
+    public ResponseEntity<InvoiceResponseDTO> updateInvoiceWithMembership(@PathVariable Long invoiceId, @RequestParam String memberPhone){
+
+        return ResponseEntity.ok( invoiceService.invoiceChangeAfterMember(invoiceId,memberPhone));
     }
 
 

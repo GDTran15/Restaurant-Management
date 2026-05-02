@@ -2,6 +2,7 @@ package com.duong.RestaurantManagement.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,8 @@ public class Member {
 
     private String lastName;
 
-    private int memberPhone;
+    @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Invalid phone number")
+    private String memberPhone;
 
     private String memberEmail;
 

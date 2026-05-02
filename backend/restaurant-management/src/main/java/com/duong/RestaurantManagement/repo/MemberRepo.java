@@ -13,11 +13,11 @@ public interface MemberRepo extends JpaRepository<Member, Long> {
 
 
     @Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.memberPhone = :memberPhone")
-    boolean existsByMemberPhone(@Param("memberPhone") int memberPhone);
+    boolean existsByMemberPhone(@Param("memberPhone") String memberPhone);
 
 
     @Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.memberEmail = :memberEmail")
     boolean existsByMemberEmail(@Param("memberEmail") String memberEmail);
 
-    Optional<Member> findByMemberPhone( int memberPhone);
+    Optional<Member> findByMemberPhone( String memberPhone);
 }

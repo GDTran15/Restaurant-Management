@@ -1,6 +1,10 @@
 package com.duong.RestaurantManagement.serviceImp;
 
+
+import com.duong.RestaurantManagement.dto.invoice.response.InvoiceResponseDTO;
+import com.duong.RestaurantManagement.exception.InvoiceHasBeenPaidException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
+import com.duong.RestaurantManagement.mapper.InvoiceMapper;
 import com.duong.RestaurantManagement.model.*;
 import com.duong.RestaurantManagement.repo.*;
 import com.duong.RestaurantManagement.service.DiningSessionService;
@@ -37,10 +41,10 @@ public class InvoiceServiceImp implements InvoiceService {
 
     @Transactional
     @Override
-    public void createNewInvoice(Long tableId) {
+    public InvoiceResponseDTO createNewInvoice(Long tableId) {
         DiningSession diningSession = diningSessionRepo.findByDiningStatusAndRestaurantTable_RestaurantTableId(DiningStatus.ACTIVE,tableId)
                 .orElseThrow(() -> new RuntimeException("No dining session found for this table"));
-        diningSessionService.deactiveDinningSession(diningSession.getDiningSessionId());
+
 
         double diningSessionPrice = diningSessionService.getDiningSessionTotalOrderPrice(diningSession.getDiningSessionId());
         Invoice invoice = Invoice.builder()
@@ -52,34 +56,58 @@ public class InvoiceServiceImp implements InvoiceService {
                 .invoiceStatus(InvoiceStatus.UNPAID)
                 .build();
         invoiceRepo.save(invoice);
+        diningSessionService.deactiveDinningSession(diningSession.getDiningSessionId());
         restaurantTableService.changeTableStatus(restaurantTableRepo.findById(tableId).orElseThrow(
                 () -> new ResourceNotFoundException("No restaurant table found ")
         ));
+        return InvoiceMapper.invoiceToCreateInvoiceResponse(invoice);
     }
 
     @Override
     @Transactional
-    public void invoiceChangeAfterMember(Long invoiceId, int memberPhone) {
+    public InvoiceResponseDTO invoiceChangeAfterMember(Long invoiceId, String memberPhone) {
         Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(
                 () -> new ResourceNotFoundException("No invoice found ")
         );
+        checkIfInvoiceIsPaid(invoice.getInvoiceStatus(), "Cannot add member after invoice been paid");
+
         Member member = memberRepo.findByMemberPhone(memberPhone).orElseThrow(
                 () -> new ResourceNotFoundException("No member found ")
         );
         invoice.setMember(member);
+        applyMemberDiscount(invoice,member);
 
-        double discountAmount = invoice.getPayBeforeDiscount() * membershipRepo.findMembershipDiscountRateByMembershipRank(member.getMemberRank());
-        invoice.setDiscountAmount(discountAmount);
-        invoice.setTotalPay(invoice.getPayBeforeDiscount() - discountAmount);
         invoiceRepo.save(invoice);
 
+        return InvoiceMapper.invoiceToCreateInvoiceResponse(invoice);
+    }
+
+    private void applyMemberDiscount(Invoice invoice, Member member) {
+        double discountRate = membershipRepo
+                .findMembershipDiscountRateByMembershipRank(member.getMemberRank());
+
+        double discountAmount = invoice.getPayBeforeDiscount() * discountRate;
+
+        invoice.setDiscountAmount(discountAmount);
+        invoice.setTotalPay(invoice.getPayBeforeDiscount() - discountAmount);
     }
 
     @Override
-    public void markInvoiceAsPaid(Invoice invoice) {
+    @Transactional
+    public void markInvoiceAsPaid(Invoice invoice)  {
+        checkIfInvoiceIsPaid(invoice.getInvoiceStatus(), "Invoice has been paid");
         invoice.setInvoiceStatus(InvoiceStatus.PAID);
-        memberService.updateMemberAfterPayment(invoice.getMember(),invoice.getTotalPay());
-        invoiceRepo.save(invoice);
+        if (invoice.getMember() != null) {
 
+            memberService.updateMemberAfterPayment(invoice.getMember(), invoice.getTotalPay());
+
+        }
+        invoiceRepo.save(invoice);
+    }
+
+    private void checkIfInvoiceIsPaid( InvoiceStatus  invoiceStatus, String message) {
+        if (invoiceStatus == InvoiceStatus.PAID){
+            throw new InvoiceHasBeenPaidException(message);
+        }
     }
 }

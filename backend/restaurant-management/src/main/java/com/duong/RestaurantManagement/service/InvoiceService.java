@@ -1,11 +1,13 @@
 package com.duong.RestaurantManagement.service;
 
+import com.duong.RestaurantManagement.dto.invoice.response.InvoiceResponseDTO;
 import com.duong.RestaurantManagement.model.Invoice;
+import org.apache.coyote.BadRequestException;
 
 public interface InvoiceService {
-    void createNewInvoice(Long dinningSessionId);
+    InvoiceResponseDTO createNewInvoice(Long dinningSessionId);
 
-    void invoiceChangeAfterMember(Long invoiceId, int memberGmail);
+    InvoiceResponseDTO invoiceChangeAfterMember(Long invoiceId, String memberPhone);
 
-    void markInvoiceAsPaid(Invoice invoice);
+    void markInvoiceAsPaid(Invoice invoice) throws BadRequestException;
 }

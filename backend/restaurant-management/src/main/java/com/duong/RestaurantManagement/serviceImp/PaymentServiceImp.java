@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.serviceImp;
 
 import com.duong.RestaurantManagement.dto.payment.request.CreateOrderPaypalRequest;
+import com.duong.RestaurantManagement.exception.InvoiceHasBeenPaidException;
 import com.duong.RestaurantManagement.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.model.*;
 import com.duong.RestaurantManagement.model.PaymentMethod;
@@ -47,8 +48,13 @@ public class PaymentServiceImp implements PaymentService {
         Invoice invoice = invoiceRepo.findById(request.invoiceId()).orElseThrow(
                 () -> new ResourceNotFoundException("Invoice not found")
         );
+
+        if (invoice.getInvoiceStatus() == InvoiceStatus.PAID) {
+            throw new InvoiceHasBeenPaidException("Invoice has been paid");
+        }
+
         OrdersController ordersController = paypalClient.getOrdersController();
-        String totalAmount = BigDecimal.valueOf(20)
+        String totalAmount = BigDecimal.valueOf(invoice.getTotalPay())
                 .setScale(2, RoundingMode.HALF_UP)
                 .toPlainString();
 
@@ -119,7 +125,7 @@ public class PaymentServiceImp implements PaymentService {
                         .getPayments()
                         .getCaptures()
                         .getFirst();
-                String orderCaptureStatus = String.valueOf(ordersCapture.getStatus());
+                String orderCaptureStatus = String.valueOf(order.getStatus());
                 if (!"COMPLETED".equals(orderCaptureStatus)) {
                     throw new RuntimeException("Order status is not COMPLETED");
                 }
@@ -128,13 +134,13 @@ public class PaymentServiceImp implements PaymentService {
                 );
                 payment.setPaidAt(LocalDateTime.now());
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
-
+                paymentRepo.save(payment);
                 invoiceService.markInvoiceAsPaid(payment.getInvoice());
 
                 return order;
 
             } catch (IOException | ApiException e) {
-                throw new RuntimeException("fail to create paypal order", e);
+                throw new RuntimeException("fail to capture paypal order", e);
             }
         }
 

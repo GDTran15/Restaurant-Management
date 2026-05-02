@@ -47,7 +47,7 @@ public class MemberServiceImp implements MemberService {
 
     }
 
-    private void checkIfMemberInformationExist(int memberPhone, String memberEmail){
+    private void checkIfMemberInformationExist(String memberPhone, String memberEmail){
        boolean memberPhoneExist = memberRepo.existsByMemberPhone(memberPhone);
        boolean memberEmailExist = memberRepo.existsByMemberEmail(memberEmail);
        Map<String,String> errors = new HashMap<>();
