@@ -1,17 +1,15 @@
 import { useAsyncList } from "react-stately";
-import Loading from "../../component/Loading";
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import CustomerMenuNavbar from "../../component/CustomerMenuNavBar";
 import MenuSection from "../../component/MenuSection";
 import CartSidebar from "../../component/CartSidebar";
 
-import { data, useNavigate, useParams } from "react-router-dom";
-import api from "../../api";
+import { useParams } from "react-router-dom";
+import { publicApi } from "../../api";
 
 
 export default function CustomerMenuPage() {
-  const navigate = useNavigate();
   const [cartList, setCartList] = useState([]); // backend
   const [cartListToShow, setCartListToShow] = useState([]); 
   const [menuName, setMenuName] = useState("");
@@ -25,9 +23,8 @@ export default function CustomerMenuPage() {
     async load({ signal, cursor }) {
       const page = cursor ?? 0;
 
-         const res = await api.get(`/menus/active?page=${page}&size=9`, {
+         const res = await publicApi.get(`/menus/active?page=${page}&size=9`, {
       signal,
-      isPublic: true,
     });
       console.log(res);
       const json =  res.data;
@@ -49,7 +46,7 @@ export default function CustomerMenuPage() {
 useEffect(() => {
   const authenticateDiningSession = async () => {
     try {
-      const response = await api.get(
+      const response = await publicApi.get(
         "/dining-sessions",
         { params: { tableQrToken: token } }
       );
@@ -66,7 +63,7 @@ useEffect(() => {
 }, [token]);
  const submitOrder = async () => {
   try {
-    const response = await api.post(
+    const response = await publicApi.post(
       "/orders",
       {
         diningSessionId: diningSessionId,

@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import CustomerMenuNavbar from "../../component/CustomerMenuNavBar";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import OrderCard from "../../component/OrderCard";
+import { publicApi } from "../../api";
 
 export default  function CustomerOrderPage(){
     const { token } = useParams();
@@ -14,7 +14,7 @@ export default  function CustomerOrderPage(){
   useEffect(() => {
   const authenticateDiningSession = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/dining-sessions", {
+      const response = await publicApi.get("/dining-sessions", {
         params: { tableQrToken: token }
       });
 
@@ -35,7 +35,7 @@ useEffect(() => {
 
   const handleGetOrder = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/orders", {
+      const response = await publicApi.get("/orders", {
         params: { diningSessionId }
       });
       setOrderList(response.data);
