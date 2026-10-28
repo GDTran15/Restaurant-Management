@@ -1,4 +1,4 @@
-package com.duong.RestaurantManagement.payment.dto.response;
+package com.duong.RestaurantManagement.payment.dto.paypal;
 
 public record GetAccessTokenResponse (
         String scope,

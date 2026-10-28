@@ -1,17 +1,16 @@
 package com.duong.RestaurantManagement.payment.service;
 
+import com.duong.RestaurantManagement.invoice.repository.InvoiceRepo;
+import com.duong.RestaurantManagement.invoice.service.InvoiceService;
+import com.duong.RestaurantManagement.payment.repository.PaymentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import com.duong.RestaurantManagement.payment.dto.request.CashPaymentRequest;
-import com.duong.RestaurantManagement.payment.dto.request.CreateOrderPaypalRequest;
-import com.duong.RestaurantManagement.payment.model.Payment;
-import com.paypal.sdk.models.Order;
+@Service
+@RequiredArgsConstructor
+public class PaymentService {
+    private final PaymentRepository paymentRepository;
+    private final InvoiceRepo invoiceRepository;
+    private final InvoiceService invoiceService;
 
-public interface PaymentService {
-
-
-    Order createOrder(CreateOrderPaypalRequest request, String method, String intent, String description);
-
-     Order captureOrder(String orderId);
-
-     Payment createCashPayment(CashPaymentRequest request);
 }

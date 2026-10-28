@@ -8,6 +8,11 @@ import com.duong.RestaurantManagement.menu.exception.MenuModificationNotAllowedE
 import com.duong.RestaurantManagement.order.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.table.exception.InvalidQrCodeException;
 
+import com.duong.RestaurantManagement.payment.exception.InvalidPaypalCredentialException;
+import com.duong.RestaurantManagement.payment.exception.PaypalRateLimitException;
+import com.duong.RestaurantManagement.payment.service.PaymentProviderException;
+import org.springframework.http.ProblemDetail;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +30,56 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(InvalidPaypalCredentialException.class)
+    public ResponseEntity<ProblemDetail> handlePaypalInvalidCredentialException(
+            InvalidPaypalCredentialException ex
+    ) {
+
+
+        ProblemDetail error = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_GATEWAY,
+                ex.getMessage()
+        );
+
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(error);
+    }
+    @ExceptionHandler(PaymentProviderException.class)
+    public ResponseEntity<ProblemDetail> handlePaymentProvider(
+            PaymentProviderException ex
+    ) {
+        ProblemDetail error = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_GATEWAY,
+                ex.getMessage()
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(error);
+    }
+
+
+    @ExceptionHandler(PaypalRateLimitException.class)
+    public ResponseEntity<ProblemDetail> handlePaypalRateLimitException(
+            PaypalRateLimitException ex
+    ) {
+
+        ProblemDetail error = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                ex.getMessage()
+        );
+
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(error);
+    }
+
+
+
+
     @ExceptionHandler({IllegalArgumentException.class, jakarta.validation.ConstraintViolationException.class})
     public ResponseEntity<ErrorApiResponse> badRequest(Exception ex) {
         return ResponseEntity.badRequest().body(new ErrorApiResponse(400, ex.getMessage()));
