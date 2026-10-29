@@ -14,6 +14,9 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 import java.util.List;
+import java.util.UUID;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +29,13 @@ public class PaypalOrderClient {
 
 
     public PaypalOrderResponse createPaypalOrder(Invoice invoice, String currency) {
+        return createOrder(invoice.getInvoiceId(), invoice.getTotalPay(), currency, UUID.randomUUID().toString());
+    }
+
+    public PaypalOrderResponse createOrder(Long invoiceId, BigDecimal amount, String currency, String requestId) {
+        if (requestId == null || requestId.isBlank()) {
+            throw new InvalidPaypalRequestException("PayPal create request ID is required");
+        }
         try {
             PaypalExperienceContext paypalExperienceContext = new PaypalExperienceContext(frontendUrl + "/payment/return",
                     frontendUrl + "/payment/cancel", "NO_SHIPPING");
@@ -34,9 +44,9 @@ public class PaypalOrderClient {
 
             PaypalPaymentSource paypalPaymentSource = new PaypalPaymentSource(paypalWallet);
 
-            PaypalAmount paypalAmount = new PaypalAmount(currency, invoice.getTotalPay().toPlainString());
+            PaypalAmount paypalAmount = new PaypalAmount(currency, amount.toPlainString());
 
-            PaypalPurchaseUnit paypalPurchaseUnit = new PaypalPurchaseUnit(invoice.getInvoiceId().toString(), paypalAmount);
+            PaypalPurchaseUnit paypalPurchaseUnit = new PaypalPurchaseUnit(invoiceId.toString(), paypalAmount);
 
             CreateOrderPaypalRequest createOrderPaypalRequest
                     = new CreateOrderPaypalRequest("CAPTURE", List.of(paypalPurchaseUnit), paypalPaymentSource);
@@ -44,6 +54,7 @@ public class PaypalOrderClient {
 
             return restClient.post()
                              .uri("/v2/checkout/orders")
+                             .header("PayPal-Request-Id", requestId)
                              .headers(httpHeaders -> httpHeaders.setBearerAuth(paypalAccessTokenProvider.getValidAccessToken()))
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(createOrderPaypalRequest)
@@ -77,4 +88,46 @@ public class PaypalOrderClient {
 
 
 
+
+
+    public PaypalCaptureOrderResponse capturePaypalOrder(String orderId) {
+        if (orderId == null || orderId.isBlank()) {
+            throw new InvalidPaypalRequestException("PayPal order ID is required");
+        }
+
+        try {
+            return restClient.post()
+                             .uri("/v2/checkout/orders/{orderId}/capture", orderId)
+                             .header("PayPal-Request-Id", UUID.nameUUIDFromBytes(
+                                     ("capture:" + orderId).getBytes(StandardCharsets.UTF_8)).toString())
+                             .headers(httpHeaders -> httpHeaders.setBearerAuth(paypalAccessTokenProvider.getValidAccessToken()))
+                             .header("Prefer", "return=representation")
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body("{}")
+                             .retrieve()
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 400, (request, response) -> {
+                                 throw new InvalidPaypalRequestException("PayPal rejected the capture request");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 401, (request, response) -> {
+                                 throw new InvalidPaypalCredentialException("PayPal rejected the access token");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 403, (request, response) -> {
+                                 throw new InvalidPaypalCredentialException("PayPal denied access to capture the order");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 404, (request, response) -> {
+                                 throw new InvalidPaypalRequestException("PayPal order was not found");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 422, (request, response) -> {
+                                 throw new InvalidPaypalRequestException("PayPal could not process the capture request");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 429, (request, response) -> {
+                                 throw new PaypalRateLimitException("PayPal request limit exceeded; retry later");
+                             })
+                             .body(PaypalCaptureOrderResponse.class);
+        } catch (ResourceAccessException e) {
+            throw new PaymentProviderException("Could not reach PayPal to capture the order", e);
+        } catch (RestClientException e) {
+            throw new PaymentProviderException("PayPal capture request failed", e);
+        }
+    }
 }

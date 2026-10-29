@@ -60,8 +60,7 @@ ALTER TABLE menu_items ADD CONSTRAINT menu_food_unique UNIQUE(menu_id,food_id);
 ALTER TABLE invoices ALTER COLUMN dining_session_id SET NOT NULL;
 ALTER TABLE invoices ALTER COLUMN invoice_status SET NOT NULL;
 CREATE UNIQUE INDEX one_current_invoice_per_session ON invoices(dining_session_id) WHERE invoice_status <> 'CANCELLED';
-UPDATE dining_sessions ds SET dining_status = 'WAITING_FOR_PAYMENT'
- WHERE dining_status = 'ACTIVE' AND EXISTS (SELECT 1 FROM invoices i WHERE i.dining_session_id = ds.dining_session_id AND i.invoice_status = 'UNPAID');
+UPDATE dining_sessions ds SET dining_status = 'WAITING_FOR_PAYMENT' WHERE dining_status = 'ACTIVE' AND EXISTS (SELECT 1 FROM invoices i WHERE i.dining_session_id = ds.dining_session_id AND i.invoice_status = 'UNPAID');
 CREATE UNIQUE INDEX one_open_session_per_table ON dining_sessions(restaurant_table_id) WHERE dining_status <> 'COMPLETED';
 CREATE UNIQUE INDEX one_active_menu ON menus(is_activated) WHERE is_activated;
 ALTER TABLE restaurant_tables ADD CONSTRAINT table_number_unique UNIQUE(restaurant_table_number);

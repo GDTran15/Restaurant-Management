@@ -9,6 +9,7 @@ public interface MenuItemRepo extends JpaRepository<MenuItem, Long> {
 
 
     boolean existsByFood_FoodIdAndMenu_IsActivatedTrue(Long foodId);
+
     boolean existsByMenu_MenuIdAndFood_FoodId(Long menuId, Long foodId);
 
     void deleteByMenu_MenuIdAndFood_FoodId(Long menuId, Long foodId);

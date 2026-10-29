@@ -2,7 +2,6 @@ package com.duong.RestaurantManagement.menu.controller;
 
 import com.duong.RestaurantManagement.food.dto.response.GetFoodOfMenuDTO;
 import com.duong.RestaurantManagement.menu.dto.request.AddMenuRequestDTO;
-import com.duong.RestaurantManagement.menu.dto.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.menu.dto.response.GetListOfMenuDTO;
 import com.duong.RestaurantManagement.menu.dto.response.GetMenuActiveDTO;
 import com.duong.RestaurantManagement.menu.dto.response.GetMenuAsOption;
@@ -11,7 +10,6 @@ import com.duong.RestaurantManagement.menu.service.MenuService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,15 +30,6 @@ public class MenuController {
         return ResponseEntity.ok("Menu successfully added");
     }
 
-
-    @PutMapping("/{menuId}")
-    public ResponseEntity<String> toggleMenu(
-            @PathVariable Long menuId,
-            @RequestParam boolean active
-    ){
-       String message = menuService.changeMenuActivation(menuId,active);
-        return ResponseEntity.ok(message);
-    }
 
     @GetMapping("")
     public ResponseEntity<List<GetListOfMenuDTO>> getAllMenus() {

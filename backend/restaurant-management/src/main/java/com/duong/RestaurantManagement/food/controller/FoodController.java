@@ -26,7 +26,7 @@ public class FoodController {
     }
 
     @PutMapping("/{foodId}")
-    public ResponseEntity<String> updateFood(@jakarta.validation.Valid @RequestBody UpdateFoodRequestDTO updateFoodRequestDTO, @PathVariable Long foodId) {
+    public ResponseEntity<String> updateFood(@Valid @RequestBody UpdateFoodRequestDTO updateFoodRequestDTO, @PathVariable Long foodId) {
         foodService.updateFoodInformation(updateFoodRequestDTO,foodId);
         return ResponseEntity.ok("Successfully updated food");
     }

@@ -16,19 +16,13 @@ public interface MenuService {
 
     void createNewMenu(AddMenuRequestDTO addMenuRequestDTO);
 
-    String changeMenuActivation(Long menuId, boolean active);
-
     List<GetListOfMenuDTO> getMenuLists();
 
     List<GetMenuAsOption> getMenuForOption();
 
     MenuDetailResponseDTO getMenuDetailsById(Long menuId);
 
-    void addMenuItems(FoodsAddIntoMenu  foodsAtIntoMenu, Long menuId);
-
-     Page<GetFoodOfMenuDTO> getFoodOfMenu(Long menuId, int page, int size, String search);
-
-     boolean checkIfMenuIsActive(Long menuId);
+    Page<GetFoodOfMenuDTO> getFoodOfMenu(Long menuId, int page, int size, String search);
 
     void activateMenu(Long menuId);
 

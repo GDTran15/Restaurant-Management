@@ -1,7 +1,9 @@
 package com.duong.RestaurantManagement.menu.controller;
 
 import com.duong.RestaurantManagement.menu.dto.request.AddMenuItemDTO;
+import com.duong.RestaurantManagement.menu.dto.request.FoodsAddIntoMenu;
 import com.duong.RestaurantManagement.menu.service.MenuItemsService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,9 @@ public class MenuItemController {
                     return ResponseEntity.noContent().build();
 
     }
-    @PostMapping("")
-    public ResponseEntity<Void> addMenuItems(@jakarta.validation.Valid @RequestBody AddMenuItemDTO addMenuItemDTO) {
-        menuItemService.addMenuItems(addMenuItemDTO);
+    @PostMapping("/{menuId}")
+    public ResponseEntity<Void> addMenuItems(@Valid @RequestBody FoodsAddIntoMenu foodsAtIntoMenu,@PathVariable Long menuId) {
+        menuItemService.addMenuItems(foodsAtIntoMenu,menuId);
         return ResponseEntity.noContent().build();
     }
 }

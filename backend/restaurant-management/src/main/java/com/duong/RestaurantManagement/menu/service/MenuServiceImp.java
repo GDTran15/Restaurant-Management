@@ -29,15 +29,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
 public class MenuServiceImp implements MenuService {
-    private final com.duong.RestaurantManagement.menu.service.MenuStateLock menuStateLock;
 
+    private final MenuStateLock menuStateLock;
     private final MenuRepo menuRepo;
     private final FoodRepo foodRepo;
     private final MenuItemRepo menuItemRepo;
@@ -62,13 +61,6 @@ public class MenuServiceImp implements MenuService {
                 .build();
 
         menuRepo.save(menu);
-    }
-
-    @Override
-    @Transactional
-    public String changeMenuActivation(Long menuId, boolean active) {
-        if (active) activateMenu(menuId); else deactivateMenu(menuId);
-        return active ? "Menu activated successfully" : "Menu deactivated successfully";
     }
 
     @Override
@@ -100,28 +92,6 @@ public class MenuServiceImp implements MenuService {
         );
     }
 
-    @Override
-    @Transactional
-    public void addMenuItems(FoodsAddIntoMenu foodsAtIntoMenu, Long menuId) {
-        menuStateLock.acquire();
-        if (checkIfMenuIsActive(menuId) && diningSessionService.checkIfAnyDinningSessionActive())
-            throw new MenuModificationNotAllowedException("Cannot edit an active menu during dining");
-        Menu menu = menuRepo.findById(menuId)
-                .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
-
-        for (Long foodId : foodsAtIntoMenu.foodIdList()) {
-            if (menuItemRepo.existsByMenu_MenuIdAndFood_FoodId(menuId, foodId)) continue;
-            Food food = foodRepo.findById(foodId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
-
-            MenuItem menuItem = MenuItem.builder()
-                    .menu(menu)
-                    .food(food)
-                    .build();
-
-            menuItemRepo.save(menuItem);
-        }
-    }
 
     @Override
     public Page<GetFoodOfMenuDTO> getFoodOfMenu(Long menuId, int page, int size, String search) {
@@ -130,26 +100,32 @@ public class MenuServiceImp implements MenuService {
 
     }
 
-    @Override
-    public boolean checkIfMenuIsActive(Long menuId) {
-        return menuRepo.existsByMenuIdAndIsActivatedTrue(menuId);
-    }
 
     @Override
+    @Transactional
     public void activateMenu(Long menuId) {
         menuStateLock.acquire();
-        if (menuRepo.existsByMenuIdAndIsActivatedTrue(menuId)) return;
-        boolean checkIfAnyMenuCurrentlyActive = menuRepo.existsByIsActivatedTrue();
-        if (checkIfAnyMenuCurrentlyActive) {
-            throw new MenuModificationNotAllowedException("Cannot activate menu during other menu activation");
-        }
+
         Menu menu = menuRepo.findById(menuId)
-                .orElseThrow(() -> new ResourceNotFoundException("Menu not found"));
+                            .orElseThrow(() ->
+                                    new ResourceNotFoundException("Menu not found")
+                            );
+
+        if (menu.isActivated()) {
+            return;
+        }
+
+        if (menuRepo.existsByIsActivatedTrue()) {
+            throw new MenuModificationNotAllowedException(
+                    "Another menu is already active"
+            );
+        }
+
         menu.setActivated(true);
-        menuRepo.save(menu);
     }
 
     @Override
+    @Transactional
     public void deactivateMenu(Long menuId) {
         menuStateLock.acquire();
 

@@ -1,6 +1,5 @@
 package com.duong.RestaurantManagement.order.mapper;
 
-import com.duong.RestaurantManagement.order.dto.request.OrderItemDTO;
 import com.duong.RestaurantManagement.order.dto.response.GetCustomerOrderDTO;
 import com.duong.RestaurantManagement.order.dto.response.GetOrderForAdminDTO;
 import com.duong.RestaurantManagement.order.dto.response.GetOrderItemDTO;

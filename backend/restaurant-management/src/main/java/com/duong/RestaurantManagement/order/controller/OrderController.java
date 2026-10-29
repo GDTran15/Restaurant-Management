@@ -1,11 +1,13 @@
 package com.duong.RestaurantManagement.order.controller;
 
+import com.duong.RestaurantManagement.auth.service.SessionAccess;
 import com.duong.RestaurantManagement.order.dto.request.AddOrderDTO;
 import com.duong.RestaurantManagement.order.dto.response.GetCustomerOrderDTO;
 import com.duong.RestaurantManagement.order.dto.response.GetOrderForAdminDTO;
 import com.duong.RestaurantManagement.order.dto.response.GetOrderNumberForEachStatus;
 import com.duong.RestaurantManagement.order.model.OrderStatus;
 import com.duong.RestaurantManagement.order.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,43 +18,29 @@ import java.util.List;
 @RequestMapping("orders")
 @RequiredArgsConstructor
 public class OrderController {
-    private final com.duong.RestaurantManagement.auth.service.SessionAccess sessionAccess;
+    private final SessionAccess sessionAccess;
 
     private final OrderService orderService;
 
     @PostMapping
-    ResponseEntity<Void> addOrders(@jakarta.validation.Valid @RequestBody AddOrderDTO addOrderDTO) {
+    public ResponseEntity<Void> addOrders(@Valid @RequestBody AddOrderDTO addOrderDTO) {
         sessionAccess.requireSession(addOrderDTO.diningSessionId());
         orderService.addOrder(addOrderDTO);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{orderId}/complete")
-    ResponseEntity<Void> UpdateOrderStatus(@PathVariable Long orderId) {
-        orderService.completeOrder(orderId);
-        return ResponseEntity.noContent().build();
 
-    }
-
-    @PatchMapping("/{orderId}/processing")
-    ResponseEntity<Void> UpdateOrderProcessing(@PathVariable Long orderId) {
-        orderService.orderStartToProcess(orderId);
+    @PatchMapping("/{orderId}/status")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus){
+         orderService.updateStatus(orderId,orderStatus);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{orderId}/cancelled")
-    ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.noContent().build();
-
-    }
     @GetMapping("")
     public ResponseEntity<List<GetCustomerOrderDTO>> getOrders(@RequestParam Long diningSessionId) {
         sessionAccess.requireSession(diningSessionId);
         return ResponseEntity.ok(orderService.getDiningSessionOrder(diningSessionId));
     }
-
-
 
     @GetMapping("/active-session")
     public ResponseEntity<List<GetOrderForAdminDTO>> getActiveOrder() {

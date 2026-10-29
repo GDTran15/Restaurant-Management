@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @AllArgsConstructor
@@ -32,6 +33,14 @@ public class Payment {
 
     @Column(unique = true)
     private String paypalOrderId;
+
+    @Column(unique = true, length = 36)
+    private String paypalCreateRequestId;
+
+    private Instant paypalCreateRequestedAt;
+
+    @Column(length = 2048)
+    private String paypalApprovalUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

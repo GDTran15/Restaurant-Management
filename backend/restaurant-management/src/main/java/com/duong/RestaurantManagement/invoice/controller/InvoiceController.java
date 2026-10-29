@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.invoice.controller;
 
 
+import com.duong.RestaurantManagement.auth.service.SessionAccess;
 import com.duong.RestaurantManagement.invoice.dto.response.InvoiceResponseDTO;
 import com.duong.RestaurantManagement.invoice.dto.response.UpdateInvoiceMemberResponse;
 import com.duong.RestaurantManagement.invoice.model.Invoice;
@@ -20,7 +21,7 @@ import java.util.List;
 @RequestMapping("/invoices")
 @Validated
 public class InvoiceController {
-    private final com.duong.RestaurantManagement.auth.service.SessionAccess sessionAccess;
+    private final SessionAccess sessionAccess;
 
     private final InvoiceService invoiceService;
 

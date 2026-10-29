@@ -14,6 +14,8 @@ import com.duong.RestaurantManagement.member.repository.MemberRepo;
 import com.duong.RestaurantManagement.member.repository.MembershipRepo;
 import com.duong.RestaurantManagement.member.service.MemberService;
 import com.duong.RestaurantManagement.order.service.OrderService;
+import com.duong.RestaurantManagement.payment.model.PaymentStatus;
+import com.duong.RestaurantManagement.payment.repository.PaymentRepository;
 import com.duong.RestaurantManagement.table.repository.RestaurantTableRepo;
 import com.duong.RestaurantManagement.table.service.RestaurantTableService;
 
@@ -37,7 +39,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
 public class InvoiceServiceImp implements InvoiceService {
 
     private final DiningSessionRepo diningSessionRepo;
@@ -54,21 +55,25 @@ public class InvoiceServiceImp implements InvoiceService {
 
     private final RestaurantTableRepo restaurantTableRepo;
 
-    private final RestaurantTableService restaurantTableService;
     private final OrderService orderService;
-    private final com.duong.RestaurantManagement.payment.repository.PaymentRepo paymentRepo;
+
+    private final PaymentRepository paymentRepo;
 
 
     @Transactional
     @Override
     public InvoiceResponseDTO createNewInvoice(Long tableId) {
         DiningSession diningSession = diningSessionRepo.findFirstByRestaurantTable_RestaurantTableIdAndDiningStatusNot(tableId, DiningStatus.COMPLETED)
-                .orElseThrow(() -> new ResourceNotFoundException("No dining session found for this table"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("No dining session found for this table"));
+
         if (orderService.hasActiveOrderByDiningSession(diningSession.getDiningSessionId())){
             throw new InvalidOrderStateException("There still active order in dining session");
         }
 
-        List<GetOrderItemDTO> orderItems = diningSessionService.getDiningSessionOrderItems(diningSession.getDiningSessionId());
+        List<GetOrderItemDTO> orderItems = diningSessionService
+                .getDiningSessionOrderItems(diningSession.getDiningSessionId());
+
         Optional<Invoice> unpaidInvoice = invoiceRepo.findFirstByDiningSession_DiningSessionIdAndInvoiceStatusOrderByCreatedAtDesc(
                 diningSession.getDiningSessionId(),
                 InvoiceStatus.UNPAID
@@ -78,6 +83,7 @@ public class InvoiceServiceImp implements InvoiceService {
         }
 
         BigDecimal diningSessionPrice = diningSessionService.getDiningSessionTotalOrderPrice(diningSession.getDiningSessionId());
+
         Invoice invoice = Invoice.builder()
                 .payBeforeDiscount(diningSessionPrice)
                 .discountAmount(BigDecimal.ZERO)
@@ -87,7 +93,10 @@ public class InvoiceServiceImp implements InvoiceService {
                 .invoiceStatus(InvoiceStatus.UNPAID)
                 .build();
         invoiceRepo.save(invoice);
+
         diningSession.setDiningStatus(DiningStatus.WAITING_FOR_PAYMENT);
+
+
         return InvoiceMapper.invoiceToCreateInvoiceResponse(invoice,  orderItems);
     }
 
@@ -103,7 +112,7 @@ public class InvoiceServiceImp implements InvoiceService {
         Member member = memberRepo.findByMemberPhone(memberPhone).orElseThrow(
                 () -> new ResourceNotFoundException("No member found ")
         );
-        cancelPendingAttempts(invoiceId);
+        requireNoPaymentAttempt(invoiceId);
         invoice.setMember(member);
         applyMemberDiscount(invoice,member);
 
@@ -127,9 +136,10 @@ public class InvoiceServiceImp implements InvoiceService {
     @Transactional
     public void markInvoiceAsPaid(Invoice invoice)  {
         checkIfInvoiceCanChange(invoice.getInvoiceStatus(), "Invoice cannot be paid");
-        if (orderService.hasActiveOrderByDiningSession(invoice.getDiningSession().getDiningSessionId()))
+        if (orderService.hasActiveOrderByDiningSession(invoice.getDiningSession().getDiningSessionId())) {
             throw new InvalidOrderStateException("Session still has unfinished orders");
-        invoice.setInvoiceStatus(InvoiceStatus.PAID);
+        }
+            invoice.setInvoiceStatus(InvoiceStatus.PAID);
         if (invoice.getMember() != null) {
 
             memberService.updateMemberAfterPayment(invoice.getMember(), invoice.getTotalPay());
@@ -176,27 +186,31 @@ public class InvoiceServiceImp implements InvoiceService {
     @Override
     @Transactional
     public InvoiceResponseDTO cancelInvoice(Long invoiceId) {
-        Invoice invoice = invoiceRepo.findById(invoiceId).orElseThrow(
+        Invoice invoice = invoiceRepo.findLockedById(invoiceId).orElseThrow(
                 () -> new ResourceNotFoundException("No invoice found ")
         );
+
         checkIfInvoiceCanChange(invoice.getInvoiceStatus(), "Only unpaid invoices can be cancelled");
 
-        cancelPendingAttempts(invoiceId);
+        requireNoPaymentAttempt(invoiceId);
+
         invoice.setInvoiceStatus(InvoiceStatus.CANCELLED);
+
         diningSessionRepo.findLockedById(invoice.getDiningSession().getDiningSessionId()).orElseThrow()
                 .setDiningStatus(DiningStatus.ACTIVE);
+
         invoiceRepo.save(invoice);
 
         List<GetOrderItemDTO> invoiceItems = diningSessionService.getDiningSessionOrderItems(invoice.getDiningSession().getDiningSessionId());
+
         return InvoiceMapper.invoiceToCreateInvoiceResponse(invoice, invoiceItems);
     }
 
-    private void cancelPendingAttempts(Long invoiceId) {
-        if (paymentRepo.existsByInvoice_InvoiceIdAndPaymentStatus(invoiceId, com.duong.RestaurantManagement.payment.model.PaymentStatus.CAPTURING))
-            throw new InvalidOrderStateException("Reconcile the pending PayPal capture first");
-        for (var payment : paymentRepo.findByInvoice_InvoiceIdAndPaymentStatus(invoiceId, com.duong.RestaurantManagement.payment.model.PaymentStatus.PENDING))
-            payment.setPaymentStatus(com.duong.RestaurantManagement.payment.model.PaymentStatus.CANCELLED);
-        paymentRepo.flush();
+    private void requireNoPaymentAttempt(Long invoiceId) {
+        // PENDING có thể là timeout: không đổi tổng tiền/hủy invoice khi chưa đối soát.
+        if (paymentRepo.existsByInvoice_InvoiceIdAndPaymentStatusIn(invoiceId, List.of(
+                PaymentStatus.PENDING, PaymentStatus.CAPTURING)))
+            throw new InvalidOrderStateException("PayPal checkout has started; finish or reconcile it before changing this invoice");
     }
     private void checkIfInvoiceCanChange( InvoiceStatus  invoiceStatus, String message) {
         if (invoiceStatus != InvoiceStatus.UNPAID){

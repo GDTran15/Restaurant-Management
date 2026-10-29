@@ -13,8 +13,10 @@ public interface AuthenticationService {
 
     void registerANewUser(UserRegisterRequestDTO userRegisterRequestDTO);
 
-        UserLoginResponseDTO loginForUser(@Valid UserLoginRequestDTO userLoginRequestDTO,
+    UserLoginResponseDTO loginForUser(@Valid UserLoginRequestDTO userLoginRequestDTO,
                                           HttpServletResponse httpServletResponse);
 
     void refreshToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException;
+
+    void logoutForUser(String refreshToken, HttpServletResponse response);
 }

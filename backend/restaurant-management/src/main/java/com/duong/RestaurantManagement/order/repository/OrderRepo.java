@@ -8,6 +8,7 @@ import com.duong.RestaurantManagement.dining.model.DiningStatus;
 import com.duong.RestaurantManagement.order.model.Order;
 import com.duong.RestaurantManagement.order.model.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,9 +19,9 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
-    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
-    @org.springframework.data.jpa.repository.Query("select e from Order e where e.orderId = :id")
-    java.util.Optional<Order> findLockedById(@org.springframework.data.repository.query.Param("id") Long id);
+    @Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from Order e where e.orderId = :id")
+    Optional<Order> findLockedById(@Param("id") Long id);
 
 
 

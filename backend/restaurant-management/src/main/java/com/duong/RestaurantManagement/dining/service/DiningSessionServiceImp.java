@@ -2,8 +2,11 @@ package com.duong.RestaurantManagement.dining.service;
 
 import java.math.BigDecimal;
 
+import com.duong.RestaurantManagement.auth.service.JwtService;
 import com.duong.RestaurantManagement.dining.model.DiningSession;
 import com.duong.RestaurantManagement.dining.model.DiningStatus;
+import com.duong.RestaurantManagement.menu.service.MenuStateLock;
+import com.duong.RestaurantManagement.order.mapper.OrderMapper;
 import com.duong.RestaurantManagement.order.model.OrderItem;
 import com.duong.RestaurantManagement.order.model.OrderStatus;
 import com.duong.RestaurantManagement.table.model.RestaurantTable;
@@ -18,6 +21,7 @@ import com.duong.RestaurantManagement.order.repository.OrderRepo;
 import com.duong.RestaurantManagement.table.repository.RestaurantTableRepo;
 import com.duong.RestaurantManagement.dining.service.DiningSessionService;
 import com.duong.RestaurantManagement.table.service.RestaurantTableService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +32,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
+
 public class DiningSessionServiceImp implements DiningSessionService {
-    private final com.duong.RestaurantManagement.menu.service.MenuStateLock menuStateLock;
+    private final MenuStateLock menuStateLock;
 
     private final DiningSessionRepo diningSessionRepo;
-    private final com.duong.RestaurantManagement.auth.service.JwtService jwtService;
-    private final RestaurantTableService restaurantTableService;
+    private final JwtService jwtService;
     private final RestaurantTableRepo restaurantTableRepo;
     private final OrderRepo orderRepo;
     private final OrderItemRepo orderItemRepo;
@@ -46,16 +49,23 @@ public class DiningSessionServiceImp implements DiningSessionService {
     }
 
     @Override
+    @Transactional
     public GetDiningSessionDTO getDiningSession(String tableQrToken) {
         menuStateLock.acquire();
+
         RestaurantTable restaurantTable = restaurantTableRepo.findByTableQrCodeValue(tableQrToken)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("QrCode not found for table ")
                 );
-        Optional<DiningSession> diningSessionExist = diningSessionRepo.findFirstByRestaurantTable_TableQrCodeValueAndDiningStatusNot(tableQrToken, DiningStatus.COMPLETED);
-        if (diningSessionExist.isPresent()) {
 
-            return new GetDiningSessionDTO(diningSessionExist.get().getDiningSessionId(), jwtService.generateDiningToken(diningSessionExist.get().getDiningSessionId()));
+        Optional<DiningSession> diningSessionExist = diningSessionRepo.
+                findFirstByRestaurantTable_TableQrCodeValueAndDiningStatusNot(tableQrToken, DiningStatus.COMPLETED);
+
+        if (diningSessionExist.isPresent()) {
+            return new GetDiningSessionDTO(
+                    diningSessionExist.get().getDiningSessionId(),
+                    jwtService.generateDiningToken(diningSessionExist.get().getDiningSessionId())
+            );
         }
 
             DiningSession diningSession = DiningSession
@@ -64,8 +74,11 @@ public class DiningSessionServiceImp implements DiningSessionService {
                     .diningStatus(DiningStatus.ACTIVE)
                     .restaurantTable(restaurantTable)
                     .build();
+
             diningSessionRepo.save(diningSession);
+
             restaurantTable.setRestaurantTableStatus(false);
+
             return new GetDiningSessionDTO(diningSession.getDiningSessionId(), jwtService.generateDiningToken(diningSession.getDiningSessionId()));
 
     }
@@ -80,10 +93,14 @@ public class DiningSessionServiceImp implements DiningSessionService {
     }
 
     @Override
+    @Transactional
     public void deactiveDinningSession(Long diningSessionId) {
-       DiningSession diningSession =  diningSessionRepo.findLockedById(diningSessionId).orElseThrow(() -> new ResourceNotFoundException("Dining session not found"));
+       DiningSession diningSession =  diningSessionRepo.findLockedById(diningSessionId).orElseThrow(() ->
+               new ResourceNotFoundException("Dining session not found"));
        diningSession.setDiningStatus(DiningStatus.COMPLETED);
+
        diningSession.setEndAt(LocalDateTime.now());
+
        diningSession.getRestaurantTable().setRestaurantTableStatus(true);
        diningSessionRepo.save(diningSession);
     }
@@ -97,7 +114,8 @@ public class DiningSessionServiceImp implements DiningSessionService {
     public List<GetOrderItemDTO> getDiningSessionOrderItems(Long diningSessionId) {
         return orderItemRepo.findByOrder_DiningSession_DiningSessionIdAndOrder_OrderStatus(
                 diningSessionId, OrderStatus.COMPLETED).stream()
-                .map(com.duong.RestaurantManagement.order.mapper.OrderMapper::toOrderItemDTO).toList();
+                            .map(OrderMapper::toOrderItemDTO)
+                            .toList();
     }
 
 

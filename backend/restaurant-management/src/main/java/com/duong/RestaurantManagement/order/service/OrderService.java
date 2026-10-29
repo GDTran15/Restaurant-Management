@@ -14,13 +14,13 @@ import java.util.List;
 public interface OrderService {
     void addOrder(AddOrderDTO addOrderDTO);
 
-    void completeOrder(Long orderId);
+    void completeOrder(Order order);
 
-    void cancelOrder(Long orderId);
+    void cancelOrder(Order order);
 
      List<GetCustomerOrderDTO> getDiningSessionOrder(Long diningSessionId);
 
-    void orderStartToProcess(Long orderId);
+    void processOrder(Order order);
 
     List<GetOrderForAdminDTO> getActiveDiningSessionOrder();
 
@@ -31,4 +31,6 @@ public interface OrderService {
     List<Order> getOrderFromDiningSession(Long diningSessionId);
 
      boolean hasActiveOrderByDiningSession(Long diningSessionId);
+
+    void updateStatus(Long orderId, OrderStatus orderStatus);
 }

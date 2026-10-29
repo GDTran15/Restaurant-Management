@@ -5,11 +5,20 @@ import com.duong.RestaurantManagement.auth.dto.request.UserLoginRequestDTO;
 import com.duong.RestaurantManagement.auth.dto.request.UserRegisterRequestDTO;
 import com.duong.RestaurantManagement.auth.dto.response.UserLoginResponseDTO;
 import com.duong.RestaurantManagement.common.exception.DuplicateResourceException;
+import com.duong.RestaurantManagement.common.exception.ResourceNotFoundException;
+import com.duong.RestaurantManagement.refresh_token.repository.RefreshTokenRepository;
+import com.duong.RestaurantManagement.refresh_token.model.RefreshToken;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+import org.springframework.security.core.AuthenticationException;
+import java.time.Instant;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import com.duong.RestaurantManagement.user.model.User;
 import com.duong.RestaurantManagement.auth.model.UserPrincipal;
 import com.duong.RestaurantManagement.user.repository.UserRepo;
-import com.duong.RestaurantManagement.auth.service.AuthenticationService;
-import com.duong.RestaurantManagement.auth.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,12 +26,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
@@ -39,13 +49,14 @@ import java.util.Map;
 @org.springframework.transaction.annotation.Transactional
 public class AuthenticationServiceImpl  implements AuthenticationService {
 
-    @org.springframework.beans.factory.annotation.Value("${app.cookie-secure}")
+    @Value("${app.cookie-secure}")
     private boolean secureCookie;
     private final UserRepo userRepo;
     private final AuthenticationManager authenticationManager;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+    private final PasswordEncoder passwordEncoder ;
     private final JwtService jwtService;
     private final MyUserDetailsService myUserDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public void registerANewUser(UserRegisterRequestDTO userRegisterRequestDTO) {
@@ -67,7 +78,7 @@ public class AuthenticationServiceImpl  implements AuthenticationService {
         }
         User user = User.builder()
                 .username(userRegisterRequestDTO.username())
-                .password(bCryptPasswordEncoder.encode(userRegisterRequestDTO.password()))
+                .password(passwordEncoder.encode(userRegisterRequestDTO.password()))
                 .email(userRegisterRequestDTO.email())
                 .phone(userRegisterRequestDTO.phone())
                 .createdAt(LocalDate.now())
@@ -83,7 +94,12 @@ public class AuthenticationServiceImpl  implements AuthenticationService {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         String accessToken = jwtService.generateToken(userPrincipal);
+
         String refreshToken = jwtService.generateRefreshToken(userPrincipal);
+        User user = userRepo.findByUsername(userLoginRequestDTO.username()).orElseThrow();
+        refreshTokenRepository.saveAndFlush(RefreshToken.builder()
+                .token(hashToken(refreshToken)).user(user).createdAt(Instant.now())
+                .expireAt(jwtService.claims(refreshToken).getExpiration().toInstant()).isRevoked(false).build());
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
 
@@ -94,7 +110,9 @@ public class AuthenticationServiceImpl  implements AuthenticationService {
         cookie.setSecure(secureCookie); //true when deploy
         httpServletResponse.addCookie(cookie); // 1 day
         httpServletResponse.setStatus(200);
-        User user = userRepo.findByUsername(userLoginRequestDTO.username()).get();
+
+
+
         return new UserLoginResponseDTO(user.getUsername(), user.getRole(), accessToken);
     }
 
@@ -107,18 +125,52 @@ public class AuthenticationServiceImpl  implements AuthenticationService {
                 try {
                     String token = cookie.getValue();
                     UserDetails user = myUserDetailsService.loadUserByUsername(jwtService.extractUsername(token));
-                    if (jwtService.validateRefreshToken(token, user)) {
+                    new AccountStatusUserDetailsChecker().check(user);
+                    if (jwtService.validateRefreshToken(token, user)
+                            && refreshTokenRepository.existsByTokenAndUser_UsernameAndIsRevokedFalseAndExpireAtAfter(
+                                    hashToken(token), user.getUsername(), Instant.now())) {
                         httpServletResponse.setContentType("application/json");
                         new ObjectMapper().writeValue(httpServletResponse.getOutputStream(),
                                 new NewAccessTokenResponse(jwtService.generateToken(user)));
                         return;
                     }
-                } catch (io.jsonwebtoken.JwtException | IllegalArgumentException | org.springframework.security.core.AuthenticationException ex) {
+                } catch (JwtException | IllegalArgumentException | AuthenticationException ex) {
                     // Invalid refresh credentials are always unauthorized.
                 }
             }
         }
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+
+
+
+    @Override
+    @Transactional
+    public void logoutForUser(String refreshToken, HttpServletResponse response) {
+
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            refreshTokenRepository.revokeByToken(hashToken(refreshToken));
+        }
+
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(secureCookie);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setAttribute("SameSite", "Strict");
+        response.addCookie(cookie);
+
+        SecurityContextHolder.clearContext();
+    }
+
+    private String hashToken(String token) {
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(token.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 is required", ex);
+        }
     }
 
 

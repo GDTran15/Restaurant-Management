@@ -7,6 +7,7 @@ import com.duong.RestaurantManagement.payment.exception.*;
 import com.duong.RestaurantManagement.payment.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -43,6 +44,88 @@ class PaypalClientTest {
                 .andRespond(withSuccess("{\"id\":\"ORDER-1\",\"status\":\"CREATED\",\"links\":[]}", MediaType.APPLICATION_JSON));
         assertEquals("ORDER-1", orders.createPaypalOrder(invoice, "USD").id());
         server.verify();
+    }
+
+    @Test
+    void createOrderSendsPersistedIdempotencyKeyAndSnapshot() {
+        server.expect(requestTo("https://api-m.sandbox.paypal.com/v2/checkout/orders"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header("PayPal-Request-Id", "stable-request-id"))
+                .andExpect(jsonPath("$.purchase_units[0].reference_id").value("7"))
+                .andExpect(jsonPath("$.purchase_units[0].amount.currency_code").value("USD"))
+                .andExpect(jsonPath("$.purchase_units[0].amount.value").value("20.00"))
+                .andRespond(withSuccess("{\"id\":\"ORDER-1\",\"status\":\"CREATED\",\"links\":[]}", MediaType.APPLICATION_JSON));
+        assertEquals("ORDER-1", orders.createOrder(7L, new BigDecimal("20.00"), "USD", "stable-request-id").id());
+        server.verify();
+    }
+
+    @Test
+    void capturesOrderAndReadsInvoiceReferenceAndCaptureDetails() {
+        server.expect(requestTo("https://api-m.sandbox.paypal.com/v2/checkout/orders/ORDER-1/capture"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header("Authorization", "Bearer access-token"))
+                .andExpect(header("Prefer", "return=representation"))
+                .andExpect(header("PayPal-Request-Id", java.util.UUID.nameUUIDFromBytes(
+                        "capture:ORDER-1".getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{}"))
+                .andRespond(withSuccess("""
+                        {
+                          "id": "ORDER-1",
+                          "status": "COMPLETED",
+                          "payer": {"payer_id": "BUYER-1"},
+                          "purchase_units": [{
+                            "reference_id": "7",
+                            "payments": {
+                              "captures": [{
+                                "id": "CAPTURE-1",
+                                "status": "COMPLETED",
+                                "amount": {"value": "20.00", "currency_code": "USD"},
+                                "final_capture": true
+                              }]
+                            }
+                          }]
+                        }
+                        """, MediaType.APPLICATION_JSON));
+
+        var response = orders.capturePaypalOrder("ORDER-1");
+        assertEquals("ORDER-1", response.id());
+        assertEquals("COMPLETED", response.status());
+        var unit = response.purchaseUnits().getFirst();
+        assertEquals("7", unit.referenceId());
+        var capture = unit.payments().captures().getFirst();
+        assertEquals("CAPTURE-1", capture.id());
+        assertEquals("COMPLETED", capture.status());
+        assertEquals("20.00", capture.amount().value());
+        assertEquals("USD", capture.amount().currencyCode());
+        server.verify();
+    }
+
+    @Test
+    void captureRejectsMissingOrderIdBeforeCallingPaypal() {
+        for (String orderId : Arrays.asList(null, "", " ")) {
+            assertThrows(InvalidPaypalRequestException.class, () -> orders.capturePaypalOrder(orderId));
+        }
+        verifyNoInteractions(tokens);
+        server.verify();
+    }
+
+    @Test
+    void captureMapsProviderFailures() {
+        for (HttpStatus status : Arrays.asList(HttpStatus.BAD_REQUEST, HttpStatus.UNAUTHORIZED,
+                HttpStatus.FORBIDDEN, HttpStatus.NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY,
+                HttpStatus.TOO_MANY_REQUESTS, HttpStatus.INTERNAL_SERVER_ERROR)) {
+            server.reset();
+            server.expect(anything()).andRespond(withStatus(status));
+            Class<? extends PaymentProviderException> expected = switch (status) {
+                case BAD_REQUEST, NOT_FOUND, UNPROCESSABLE_ENTITY -> InvalidPaypalRequestException.class;
+                case UNAUTHORIZED, FORBIDDEN -> InvalidPaypalCredentialException.class;
+                case TOO_MANY_REQUESTS -> PaypalRateLimitException.class;
+                default -> PaymentProviderException.class;
+            };
+            assertThrows(expected, () -> orders.capturePaypalOrder("ORDER-1"));
+            server.verify();
+        }
     }
 
     @Test

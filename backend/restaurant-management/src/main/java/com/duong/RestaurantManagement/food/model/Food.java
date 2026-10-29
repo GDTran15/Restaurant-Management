@@ -42,7 +42,7 @@ public class Food {
 
 
 
-    @OneToOne(mappedBy = "food", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "food")
     private FoodCategoryMap foodCategoryMap;
 
     @OneToMany(mappedBy = "food")

@@ -1,6 +1,7 @@
 package com.duong.RestaurantManagement.auth.config;
 import com.duong.RestaurantManagement.auth.service.JwtService;
 import com.duong.RestaurantManagement.auth.service.MyUserDetailsService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,16 +21,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final MyUserDetailsService myUserDetailsService;
+
     private final JwtService jwtService;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return "POST".equals(request.getMethod()) && List.of("/authenticate", "/refresh-token", "/logout")
+                .contains(request.getServletPath());
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
         String header = request.getHeader("Authorization");
+
+        String username = null;
+
+
         try {
             if (header != null && header.startsWith("Bearer ")) {
-                var claims = jwtService.claims(header.substring(7));
+
+                Claims claims = jwtService.claims(header.substring(7));
+
                 String purpose = claims.get("purpose", String.class);
+
                 UsernamePasswordAuthenticationToken authentication;
+
                 if ("dining".equals(purpose)) {
                     authentication = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
                             List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER")));

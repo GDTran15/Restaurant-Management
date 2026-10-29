@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
+@Transactional
 public class FoodServiceImpl implements FoodService {
 
     private final FoodRepo foodRepo;

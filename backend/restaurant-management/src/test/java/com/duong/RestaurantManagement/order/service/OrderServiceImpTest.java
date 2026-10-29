@@ -1,6 +1,8 @@
 package com.duong.RestaurantManagement.order.service;
 
 import com.duong.RestaurantManagement.order.dto.request.AddOrderDTO;
+import com.duong.RestaurantManagement.order.dto.response.CreateNewOrderEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.duong.RestaurantManagement.order.dto.request.OrderItemDTO;
 import com.duong.RestaurantManagement.dining.model.DiningSession;
 import com.duong.RestaurantManagement.order.model.Order;
@@ -36,6 +38,8 @@ class OrderServiceImpTest {
     private  DiningSessionService diningSessionService;
     @Mock
     private  OrderItemService orderItemService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private  OrderServiceImp orderServiceImp;
@@ -43,6 +47,16 @@ class OrderServiceImpTest {
     @Nested
     @DisplayName("Create Order Test")
     class CreateOrderTest{
+
+        @Test
+        void failedOrderDoesNotPublishCreation() {
+            when(diningSessionService.validateDiningSessionActiveStatus(1L)).thenReturn(new DiningSession());
+            when(orderItemService.addListOfOrderItemAndGetTotalPrice(anyList(), any(Order.class)))
+                    .thenThrow(new IllegalStateException("Out of stock"));
+            assertThrows(IllegalStateException.class, () -> orderServiceImp.addOrder(
+                    new AddOrderDTO(1L, List.of(new OrderItemDTO(1L, 2)))));
+            verifyNoInteractions(applicationEventPublisher);
+        }
 
         @Test
         @DisplayName("Should create order success when dining session is active")
@@ -83,6 +97,7 @@ class OrderServiceImpTest {
                 assertEquals(diningSession, secondSavedOrder.getDiningSession());
 
                 assertEquals(new java.math.BigDecimal("45.00"), secondSavedOrder.getOrderPrice());
+                verify(applicationEventPublisher).publishEvent(new CreateNewOrderEvent(secondSavedOrder.getOrderId(), diningSessionId));
             }
     }
 }

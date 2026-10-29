@@ -5,6 +5,7 @@ import com.duong.RestaurantManagement.invoice.model.Invoice;
 import com.duong.RestaurantManagement.invoice.model.InvoiceStatus;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,9 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InvoiceRepo extends JpaRepository<Invoice, Long> {
-    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
-    @org.springframework.data.jpa.repository.Query("select e from Invoice e where e.invoiceId = :id")
-    java.util.Optional<Invoice> findLockedById(@org.springframework.data.repository.query.Param("id") Long id);
+    @Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from Invoice e where e.invoiceId = :id")
+    Optional<Invoice> findLockedById(@Param("id") Long id);
 
 
     boolean existsById(@NotNull Long invoiceId);

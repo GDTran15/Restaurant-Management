@@ -4,51 +4,42 @@ import java.math.BigDecimal;
 
 import com.duong.RestaurantManagement.dining.model.DiningSession;
 import com.duong.RestaurantManagement.dining.model.DiningStatus;
-import com.duong.RestaurantManagement.food.model.Food;
+import com.duong.RestaurantManagement.order.dto.response.*;
 import com.duong.RestaurantManagement.order.model.Order;
 import com.duong.RestaurantManagement.order.model.OrderItem;
 import com.duong.RestaurantManagement.order.model.OrderStatus;
 
 import com.duong.RestaurantManagement.order.dto.request.AddOrderDTO;
-import com.duong.RestaurantManagement.order.dto.response.GetCustomerOrderDTO;
-import com.duong.RestaurantManagement.order.dto.response.GetOrderForAdminDTO;
-import com.duong.RestaurantManagement.order.dto.response.GetOrderItemDTO;
-import com.duong.RestaurantManagement.order.dto.response.GetOrderNumberForEachStatus;
 import com.duong.RestaurantManagement.order.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.common.exception.ResourceNotFoundException;
 import com.duong.RestaurantManagement.order.mapper.OrderMapper;
 import com.duong.RestaurantManagement.food.repository.FoodRepo;
 import com.duong.RestaurantManagement.order.repository.OrderRepo;
 import com.duong.RestaurantManagement.dining.service.DiningSessionService;
-import com.duong.RestaurantManagement.order.service.OrderItemService;
-import com.duong.RestaurantManagement.order.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
 public class OrderServiceImp implements OrderService {
 
-     private final OrderRepo orderRepo;
-     private final DiningSessionService diningSessionService;
+    private final OrderRepo orderRepo;
+    private final DiningSessionService diningSessionService;
     private final OrderItemService orderItemService;
     private final FoodRepo foodRepo;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     @Transactional
     public void addOrder(AddOrderDTO addOrderDTO) {
-       if (addOrderDTO == null || addOrderDTO.diningSessionId() == null || addOrderDTO.diningSessionId() <= 0
-               || addOrderDTO.orderItemDTOS() == null || addOrderDTO.orderItemDTOS().isEmpty()
-               || addOrderDTO.orderItemDTOS().stream().anyMatch(i -> i == null || i.foodId() <= 0 || i.quantity() <= 0)) {
-           throw new IllegalArgumentException("A session and positive order quantities are required");
-       }
+
        DiningSession diningSession = diningSessionService.validateDiningSessionActiveStatus(addOrderDTO.diningSessionId());
+
         Order order = Order.builder()
                 .createdAt(LocalDateTime.now())
                 .orderNumber(generateOrderNumber())
@@ -62,19 +53,16 @@ public class OrderServiceImp implements OrderService {
         BigDecimal total =  orderItemService.addListOfOrderItemAndGetTotalPrice(addOrderDTO.orderItemDTOS(),order);
 
         order.setOrderPrice(total);
-        orderRepo.save(order);
 
+        orderRepo.save(order);
+        applicationEventPublisher.publishEvent(new CreateNewOrderEvent(order.getOrderId(), addOrderDTO.diningSessionId()));
 
     }
 
     @Override
     @Transactional
-    public void completeOrder(Long orderId) {
-        Order order = orderRepo.findLockedById(orderId).
-                orElseThrow(
-                        () -> new ResourceNotFoundException("Order not found")
-                );
-        checkIfOrderIsAbleToUpdate(order,OrderStatus.COMPLETED);
+    public void completeOrder(Order order) {
+
         order.setOrderStatus(OrderStatus.COMPLETED);
         orderRepo.save(order);
 
@@ -82,27 +70,16 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     @Transactional
-    public void orderStartToProcess(Long orderId){
-        Order order = orderRepo.findLockedById(orderId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Order not found")
-                );
-        checkIfOrderIsAbleToUpdate(order,OrderStatus.IN_PROGRESS);
+    public void processOrder(Order order){
         order.setOrderStatus(OrderStatus.IN_PROGRESS);
         orderRepo.save(order);
     }
 
  @Override
  @Transactional
-    public void cancelOrder(Long orderId) {
-        Order order = orderRepo.findLockedById(orderId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Order not found")
-                );
-        checkIfOrderIsAbleToUpdate(order,OrderStatus.CANCELLED);
+    public void cancelOrder(Order order) {
 
         order.setOrderStatus(OrderStatus.CANCELLED);
-
         for (OrderItem orderItem : order.getOrderItems()) {
             int update = foodRepo.updateFoodQuantityAfterOrderCancel(orderItem.getFood().getFoodId(),orderItem.getQuantity());
             if (update == 0) {
@@ -110,6 +87,32 @@ public class OrderServiceImp implements OrderService {
             }
         }
 
+
+    }
+    private void checkIfOrderIsAbleToUpdate(Order order,OrderStatus updateStatus) {
+        if (order.getOrderStatus() == OrderStatus.PENDING && (updateStatus == OrderStatus.IN_PROGRESS || updateStatus == OrderStatus.CANCELLED))  return;
+
+        if  (order.getOrderStatus() == OrderStatus.IN_PROGRESS &&  updateStatus == OrderStatus.COMPLETED) return;
+
+        throw new InvalidOrderStateException("Cannot change from " + order.getOrderStatus() + " to " + updateStatus);
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(Long orderId, OrderStatus orderStatus) {
+        Order order = orderRepo.findLockedById(orderId)
+                               .orElseThrow(
+                                       () -> new ResourceNotFoundException("Order not found")
+                               );
+        checkIfOrderIsAbleToUpdate(order,orderStatus);
+        String oldStatus = order.getOrderStatus().name();
+        switch (orderStatus){
+           case COMPLETED -> completeOrder(order);
+           case IN_PROGRESS -> processOrder(order);
+           case CANCELLED -> cancelOrder(order);
+       }
+       applicationEventPublisher.publishEvent(new OrderStatusEvent(orderId,oldStatus,order.getOrderStatus().name(),
+               order.getDiningSession().getDiningSessionId()));
 
     }
 
@@ -134,7 +137,7 @@ public class OrderServiceImp implements OrderService {
         List<Order> orders = orderRepo.findByActiveDiningSessionAndOrderStatus(DiningStatus.ACTIVE,orderStatus);
 
         return orders.stream()
-                .map(OrderMapper::orderToGetOrderForAdminDTO) .toList();
+                .map(OrderMapper::orderToGetOrderForAdminDTO).toList();
     }
 
     @Override
@@ -149,6 +152,9 @@ public class OrderServiceImp implements OrderService {
                 List.of(OrderStatus.PENDING, OrderStatus.IN_PROGRESS)
         );
     }
+
+
+
 
     @Override
     public List<GetOrderNumberForEachStatus> getNumberOfOrderForEachStatus() {
@@ -171,15 +177,7 @@ public class OrderServiceImp implements OrderService {
     }
 
 
-    private void checkIfOrderIsAbleToUpdate(Order order,OrderStatus updateStatus) {
-        if (order.getOrderStatus() == OrderStatus.PENDING && (updateStatus == OrderStatus.IN_PROGRESS || updateStatus == OrderStatus.CANCELLED))  return;
 
-        if  (order.getOrderStatus() == OrderStatus.IN_PROGRESS &&  updateStatus == OrderStatus.COMPLETED) return;
-
-        String message = "Cannot change from " + order.getOrderStatus() + " to " + updateStatus;
-
-        throw new InvalidOrderStateException(message);
-    }
 
     private String generateOrderNumber() {
         return "ORD-" + UUID.randomUUID();
