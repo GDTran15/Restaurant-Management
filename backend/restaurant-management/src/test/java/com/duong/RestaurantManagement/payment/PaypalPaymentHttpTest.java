@@ -2,7 +2,7 @@ package com.duong.RestaurantManagement.payment;
 
 import com.duong.RestaurantManagement.payment.controller.PaymentController;
 import com.duong.RestaurantManagement.common.exception.GlobalExceptionHandler;
-import com.duong.RestaurantManagement.payment.service.PaymentProviderException;
+import com.duong.RestaurantManagement.payment.exception.PaymentProviderException;
 import com.duong.RestaurantManagement.payment.service.PaymentService;
 import com.duong.RestaurantManagement.payment.dto.response.CreateOrderPaypalResponse;
 import com.duong.RestaurantManagement.payment.dto.response.PaymentResponse;

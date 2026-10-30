@@ -9,7 +9,8 @@ import java.util.List;
 public record PaypalCaptureOrderResponse(
         String id,
         String status,
-        @JsonProperty("purchase_units") List<PurchaseUnit> purchaseUnits
+        @JsonProperty("purchase_units")
+        List<PurchaseUnit> purchaseUnits
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record PurchaseUnit(

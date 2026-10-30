@@ -17,7 +17,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     boolean existsByInvoice_InvoiceIdAndPaymentStatus(Long invoiceId, PaymentStatus status);
 
-    // Lấy id trước, rồi khóa invoice trước khi đọc Payment để tránh dữ liệu cũ khi chờ khóa.
     @Query("select p.invoice.invoiceId from Payment p where p.paypalOrderId = :paypalOrderId")
     Optional<Long> findInvoiceIdByPaypalOrderId(String paypalOrderId);
 }

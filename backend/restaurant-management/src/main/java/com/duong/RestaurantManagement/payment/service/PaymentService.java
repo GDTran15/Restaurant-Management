@@ -15,6 +15,7 @@ import com.duong.RestaurantManagement.payment.dto.paypal.PaypalOrderResponse;
 import com.duong.RestaurantManagement.payment.dto.paypal.PaypalCaptureOrderResponse;
 import com.duong.RestaurantManagement.payment.dto.response.CreateOrderPaypalResponse;
 import com.duong.RestaurantManagement.payment.dto.response.PaymentResponse;
+import com.duong.RestaurantManagement.payment.exception.PaymentProviderException;
 import com.duong.RestaurantManagement.payment.model.Payment;
 import com.duong.RestaurantManagement.payment.model.PaymentMethod;
 import com.duong.RestaurantManagement.payment.model.PaymentStatus;
@@ -73,7 +74,7 @@ public class PaymentService {
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public PaymentResponse capturePaypalOrder(String orderId) {
-        PaymentResponse attempt = transaction.execute(status -> {
+        PaymentResponse paymentResponse = transaction.execute(status -> {
             Payment payment = lockedPayment(orderId);
             if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
                 requireCapturable(payment);
@@ -82,7 +83,10 @@ public class PaymentService {
             }
             return PaymentResponse.from(payment);
         });
-        if (attempt.paymentStatus() == PaymentStatus.COMPLETED) return attempt;
+
+        if (paymentResponse.paymentStatus() == PaymentStatus.COMPLETED) {
+            return paymentResponse;
+        }
 
         // Keep CAPTURING on uncertainty; retries use the same provider request ID.
         PaypalCaptureOrderResponse result = paypalOrderClient.capturePaypalOrder(orderId);
@@ -124,18 +128,7 @@ public class PaymentService {
     }
 
     private void validateCapture(Payment payment, PaypalCaptureOrderResponse result) {
-        if (result == null || !payment.getPaypalOrderId().equals(result.id())
-                || !"COMPLETED".equals(result.status()) || result.purchaseUnits() == null
-                || result.purchaseUnits().size() != 1) {
-            throw new PaymentProviderException("PayPal has not confirmed the payment");
-        }
-        var unit = result.purchaseUnits().getFirst();
-        if (unit == null || !payment.getInvoice().getInvoiceId().toString().equals(unit.referenceId())
-                || unit.payments() == null || unit.payments().captures() == null
-                || unit.payments().captures().size() != 1) {
-            throw new PaymentProviderException("PayPal capture does not match the invoice");
-        }
-        var capture = unit.payments().captures().getFirst();
+        var capture = getCapture(payment, result);
         if (capture == null || capture.id() == null || capture.id().isBlank()
                 || !"COMPLETED".equals(capture.status()) || capture.amount() == null
                 || !payment.getCurrency().equals(capture.amount().currencyCode())) {
@@ -147,6 +140,21 @@ public class PaymentService {
             // Reject malformed provider amounts along with mismatched amounts.
         }
         throw new PaymentProviderException("PayPal capture amount does not match the payment");
+    }
+
+    private PaypalCaptureOrderResponse.Capture getCapture(Payment payment, PaypalCaptureOrderResponse result) {
+        if (result == null || !payment.getPaypalOrderId().equals(result.id())
+                || !"COMPLETED".equals(result.status()) || result.purchaseUnits() == null
+                || result.purchaseUnits().size() != 1) {
+            throw new PaymentProviderException("PayPal has not confirmed the payment");
+        }
+        var unit = result.purchaseUnits().getFirst();
+        if (unit == null || !payment.getInvoice().getInvoiceId().toString().equals(unit.referenceId())
+                || unit.payments() == null || unit.payments().captures() == null
+                || unit.payments().captures().size() != 1) {
+            throw new PaymentProviderException("PayPal capture does not match the invoice");
+        }
+        return unit.payments().captures().getFirst();
     }
 
     private Checkout reserve(Long invoiceId) {

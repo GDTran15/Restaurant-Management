@@ -1,4 +1,4 @@
-package com.duong.RestaurantManagement.payment.service;
+package com.duong.RestaurantManagement.payment.exception;
 
 public class PaymentProviderException extends RuntimeException {
     public PaymentProviderException(String message) { super(message); }

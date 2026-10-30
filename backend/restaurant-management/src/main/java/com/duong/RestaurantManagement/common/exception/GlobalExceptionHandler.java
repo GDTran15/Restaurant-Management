@@ -8,7 +8,7 @@ import com.duong.RestaurantManagement.menu.exception.MenuModificationNotAllowedE
 import com.duong.RestaurantManagement.order.exception.InvalidOrderStateException;
 import com.duong.RestaurantManagement.payment.exception.InvalidPaypalCredentialException;
 import com.duong.RestaurantManagement.payment.exception.PaypalRateLimitException;
-import com.duong.RestaurantManagement.payment.service.PaymentProviderException;
+import com.duong.RestaurantManagement.payment.exception.PaymentProviderException;
 import com.duong.RestaurantManagement.table.exception.InvalidQrCodeException;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,7 +19,6 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

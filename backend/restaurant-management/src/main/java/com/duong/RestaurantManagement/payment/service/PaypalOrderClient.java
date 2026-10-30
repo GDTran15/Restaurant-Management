@@ -2,8 +2,10 @@ package com.duong.RestaurantManagement.payment.service;
 
 import com.duong.RestaurantManagement.invoice.model.Invoice;
 import com.duong.RestaurantManagement.payment.dto.paypal.*;
+import com.duong.RestaurantManagement.payment.dto.response.PaypalOrderDetails;
 import com.duong.RestaurantManagement.payment.exception.InvalidPaypalCredentialException;
 import com.duong.RestaurantManagement.payment.exception.InvalidPaypalRequestException;
+import com.duong.RestaurantManagement.payment.exception.PaymentProviderException;
 import com.duong.RestaurantManagement.payment.exception.PaypalRateLimitException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ public class PaypalOrderClient {
     @Value("${app.frontend-url}")
     private String frontendUrl;
     private final PaypalAccessTokenProvider paypalAccessTokenProvider;
+    private final PaymentReconciliationService paymentReconciliationService;
 
 
     public PaypalOrderResponse createPaypalOrder(Invoice invoice, String currency) {
@@ -128,6 +131,72 @@ public class PaypalOrderClient {
             throw new PaymentProviderException("Could not reach PayPal to capture the order", e);
         } catch (RestClientException e) {
             throw new PaymentProviderException("PayPal capture request failed", e);
+        }
+    }
+
+
+    public PaypalOrderDetails paypalOrderDetails(String orderId){
+        if (orderId == null || orderId.isBlank()){
+            throw new InvalidPaypalRequestException("Order id cannot be null");
+        }
+
+        try {
+            PaypalOrderDetails details = restClient.get()
+                             .uri("/v2/checkout/orders/{orderId}", orderId)
+                             .headers(httpHeaders -> httpHeaders.setBearerAuth(paypalAccessTokenProvider.getValidAccessToken()))
+                             .retrieve()
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 400, (request, response) -> {
+                                 throw new InvalidPaypalRequestException("PayPal rejected the get request");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 401, (request, response) -> {
+                                 throw new InvalidPaypalCredentialException("PayPal rejected the access token");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 403, (request, response) -> {
+                                 throw new InvalidPaypalCredentialException("PayPal denied access to get the order");
+                             })
+                             .onStatus(httpStatusCode -> httpStatusCode.value() == 404, (request, response) -> {
+                                 throw new InvalidPaypalRequestException("PayPal order was not found");
+                             })
+
+                             .body(PaypalOrderDetails.class);
+
+            validatePaypalOrderDetails(details,orderId);
+
+            return details;
+        } catch  (ResourceAccessException e) {
+            throw new PaymentProviderException("Could not reach PayPal to get the order", e);
+        } catch (RestClientException e) {
+            throw new PaymentProviderException("PayPal get request failed", e);
+        }
+    }
+
+
+    private void validatePaypalOrderDetails(
+            PaypalOrderDetails details,
+            String requestedOrderId
+    ) {
+        if (details == null) {
+            throw new PaymentProviderException(
+                    "PayPal returned an empty order response"
+            );
+        }
+
+        if (details.id() == null || details.id().isBlank()) {
+            throw new PaymentProviderException(
+                    "PayPal response is missing order ID"
+            );
+        }
+
+        if (!details.id().equals(requestedOrderId)) {
+            throw new PaymentProviderException(
+                    "PayPal returned an unexpected order ID"
+            );
+        }
+
+        if (details.status() == null || details.status().isBlank()) {
+            throw new PaymentProviderException(
+                    "PayPal response is missing order status"
+            );
         }
     }
 }

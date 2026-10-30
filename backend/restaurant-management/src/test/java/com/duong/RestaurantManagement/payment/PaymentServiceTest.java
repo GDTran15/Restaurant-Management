@@ -18,7 +18,7 @@ import com.duong.RestaurantManagement.payment.model.Payment;
 import com.duong.RestaurantManagement.payment.model.PaymentMethod;
 import com.duong.RestaurantManagement.payment.model.PaymentStatus;
 import com.duong.RestaurantManagement.payment.repository.PaymentRepository;
-import com.duong.RestaurantManagement.payment.service.PaymentProviderException;
+import com.duong.RestaurantManagement.payment.exception.PaymentProviderException;
 import com.duong.RestaurantManagement.payment.service.PaymentService;
 import com.duong.RestaurantManagement.payment.service.PaypalOrderClient;
 import org.junit.jupiter.api.BeforeEach;
